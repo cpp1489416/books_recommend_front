@@ -1,54 +1,27 @@
 import Vue from 'vue'
-import App from './App.vue'
 
-// element
-// import './plugins/element.js'
+import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
-// router
-import Router from './router'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 
-// jquery
-import '@/assets/jquery-vendor'
-import 'jquery-slimscroll'
+import '@/styles/index.scss' // global css
 
-// iconfont
-import '@/assets/iconfont/iconfont.css'
+import App from './App'
+import router from './router'
+import store from './store'
 
-// bootstrap
-import 'bootstrap'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap/dist/js/bootstrap.min.js'
+import '@/icons' // icon
+import '@/permission' // permission control
 
-// font-awesome
-import 'font-awesome/css/font-awesome.css'
+Vue.use(ElementUI, { locale })
 
-// adminlte
-import 'admin-lte'
-import 'admin-lte/dist/css/AdminLTE.min.css'
-import 'admin-lte/dist/css/skins/skin-blue.min.css'
-import 'admin-lte/dist/js/adminlte.min.js'
-
-// reset.css
-import '@/assets/css/reset.css'
-
-// axios
-import Axios from 'axios'
-
-// store
-import Store from '@/store'
-
-// tools
-import Tools from '@/assets/tools'
-
-Vue.config.productionTip = false;
-
-Vue.prototype.axios = Axios;
-
-Vue.prototype.tools = Tools;
+Vue.config.productionTip = false
 
 new Vue({
-    router: Router,
-    store: Store,
-    render: h => h(App)
-}).$mount('#app');
-
+  el: '#app',
+  router,
+  store,
+  render: h => h(App)
+})
