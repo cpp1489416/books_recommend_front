@@ -1,26 +1,33 @@
-import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, logout, getUserInfo } from '@/api/login'
+import {  removeToken } from '@/utils/auth'
 
 const user = {
   state: {
-    token: getToken(),
-    name: '',
+    username: '',
     avatar: '',
-    roles: []
+    roles: [],
+    userInfo: {},
+    ignoreAjaxMessageBox: false,
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
     },
-    SET_NAME: (state, name) => {
-      state.name = name
+    SET_USERNAME: (state, username) => {
+      state.username = username
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    SET_USER_INFO: (state, userInfo) => {
+      state.userInfo = userInfo
+    },
+    SET_IGNORE_AJAX_MESSAGE_BOX: (state, v) => {
+      state.ignoreAjaxMessageBox = v
     }
   },
 
@@ -30,28 +37,26 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         login(username, userInfo.password).then(response => {
-          const data = response.data
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
-          resolve()
+          if (response.code == '0') {
+            commit('SET_USERNAME', username)
+          } else {
+            commit('SET_USERNAME', '')
+          }
+          resolve(response)
         }).catch(error => {
+          commit('SET_USERNAME', '')
           reject(error)
         })
       })
     },
 
     // 获取用户信息
-    GetInfo({ commit, state }) {
+    GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data
-          if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', data.roles)
-          } else {
-            reject('getInfo: roles must be a non-null array !')
-          }
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
+        getUserInfo(true).then(response => {
+          const info = response.info
+          commit('SET_USERNAME', info.username)
+          commit('SET_USER_INFO', info)
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -63,21 +68,19 @@ const user = {
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
-          resolve()
         }).catch(error => {
-          reject(error)
         })
+        commit('SET_USERNAME', '')
+        commit('SET_USER_INFO', null)
+        resolve()
       })
     },
 
     // 前端 登出
     FedLogOut({ commit }) {
       return new Promise(resolve => {
-        commit('SET_TOKEN', '')
-        removeToken()
+        commit('SET_USERNAME', '')
+        commit('SET_USER_INFO', null)
         resolve()
       })
     }

@@ -90,9 +90,12 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
+          this.$store.dispatch('Login', this.loginForm).then((response) => {
             this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
+            if (response.code !== '0') {
+            } else {
+              this.$router.push({ path: this.redirect || '/' })
+            }
           }).catch(() => {
             this.loading = false
           })
