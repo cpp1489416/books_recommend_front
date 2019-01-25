@@ -1,13 +1,12 @@
 import { login, logout, getUserInfo } from '@/api/login'
-import {  removeToken } from '@/utils/auth'
 
 const user = {
   state: {
     username: '',
-    avatar: '',
+    avatar: '/static/logo.png',
     roles: [],
     userInfo: {},
-    ignoreAjaxMessageBox: false,
+    ignoreAjaxMessageBox: false
   },
 
   mutations: {
@@ -37,7 +36,7 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         login(username, userInfo.password).then(response => {
-          if (response.code == '0') {
+          if (response.code === '0') {
             commit('SET_USERNAME', username)
           } else {
             commit('SET_USERNAME', '')
@@ -68,7 +67,7 @@ const user = {
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         logout(state.token).then(() => {
-        }).catch(error => {
+        }).catch(() => {
         })
         commit('SET_USERNAME', '')
         commit('SET_USER_INFO', null)

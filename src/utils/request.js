@@ -47,8 +47,8 @@ service.interceptors.response.use(
         message: '<span style="color:red;">' + error.response.status + ' </span>' +
           error.response.config.method.toUpperCase() + ' ' +
           error.response.config.url
-      }) 
-      if ((error.response.status === 403 || error.response.status === 401) && 
+      })
+      if ((error.response.status === 403 || error.response.status === 401) &&
         !store.getters.ignoreAjaxMessageBox) {
         MessageBox.confirm(
           '你已被登出，可以取消继续留在该页面，或者重新登录',
@@ -63,7 +63,7 @@ service.interceptors.response.use(
             location.reoad() // 为了重新实例化vue-router对象 避免bug
           })
         })
-      } 
+      }
     } else {
       Notification.error({
         title: 'ajax error',

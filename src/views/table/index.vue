@@ -9,17 +9,17 @@
       highlight-current-row>
       <el-table-column align="center" label="ID" width="95">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Title">
+      <el-table-column label="name">
         <template slot-scope="scope">
-          {{ scope.row.title }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
+      <el-table-column label="desc" width="110" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.desc }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Pageviews" width="110" align="center">
@@ -43,36 +43,50 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
+  import {getList} from '@/api/table'
 
-export default {
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
+  export default {
+    filters: {
+      statusFilter(status) {
+        const statusMap = {
+          published: 'success',
+          draft: 'gray',
+          deleted: 'danger'
+        }
+        return statusMap[status]
       }
-      return statusMap[status]
-    }
-  },
-  data() {
-    return {
-      list: null,
-      listLoading: true
-    }
-  },
-  created() {
-    this.fetchData()
-  },
-  methods: {
-    fetchData() {
-      this.listLoading = true
-      getList(this.listQuery).then(response => {
-        this.list = response.data.items
+    },
+    data() {
+      return {
+        queryParams: {
+          name: 'a',
+          desc: '',
+          order_by: '-desc',
+          page_number: 1,
+          page_size: 2,
+        },
+        list: null,
+        listLoading: true
+      }
+    },
+    created() {
+      this.ajax.get('/books', {
+        params: this.queryParams
+      }).then(response => {
+        console.log(response)
+        this.list = response.info.content
         this.listLoading = false
+      }, function () {
       })
+    },
+    methods: {
+      fetchData() {
+        this.listLoading = true
+        getList(this.listQuery).then(response => {
+          this.list = response.data.items
+          this.listLoading = false
+        })
+      }
     }
   }
-}
 </script>

@@ -15,9 +15,13 @@ import store from './store'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import request from '@/utils/request'
+
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
+
+Vue.prototype.ajax = request
 
 new Vue({
   el: '#app',

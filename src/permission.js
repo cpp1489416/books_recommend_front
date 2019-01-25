@@ -16,10 +16,10 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       store.commit('SET_IGNORE_AJAX_MESSAGE_BOX', true)
-      store.dispatch('GetUserInfo').then(res => { 
+      store.dispatch('GetUserInfo').then(res => {
         next()
         store.commit('SET_IGNORE_AJAX_MESSAGE_BOX', false)
-      }).catch(()=>{
+      }).catch(() => {
         next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
         NProgress.done()
         store.commit('SET_IGNORE_AJAX_MESSAGE_BOX', false)
