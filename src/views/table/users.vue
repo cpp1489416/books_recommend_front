@@ -1,7 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input style="width: 200px;" class="filter-item" v-model="queryParams.title" placeholder="title"
+      <el-input style="width: 200px;" class="filter-item" v-model="queryParams.name" placeholder="name"
+                @keyup.native.enter="reloadPage"/>
+      <el-input style="width: 200px;" class="filter-item" v-model="queryParams.location" placeholder="location"
                 @keyup.native.enter="reloadPage"/>
       <el-select v-model="queryParams.order_by" class="filter-item">
         <el-option v-for="item in orderBys" :value="item"/>
@@ -23,29 +25,24 @@
         </template>
       </el-table-column>
       -->
-      <el-table-column label="" width="80" align="center">
+      <el-table-column label="id" width="110" align="center">
         <template slot-scope="scope">
-          <img :src="scope.row.image_url" height="40px"/>
+          {{scope.row.id}}
         </template>
       </el-table-column>
-      <el-table-column label="ISBN" width="110" align="center">
+      <el-table-column label="name">
         <template slot-scope="scope">
-          {{scope.row.isbn}}
+          {{ scope.row.name}}
         </template>
       </el-table-column>
-      <el-table-column label="title">
+      <el-table-column label="location" align="center">
         <template slot-scope="scope">
-          {{ scope.row.title}}
+          <span>{{ scope.row.location }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="author" width="110" align="center">
+      <el-table-column label="age" width="110" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="year" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.published_year }}
+          {{ scope.row.age }}
         </template>
       </el-table-column>
     </el-table>
@@ -76,7 +73,8 @@
     data() {
       return {
         queryParams: {
-          title: null,
+          name : null,
+          location: null,
           order_by: 'id',
           page_number: 1,
           page_size: 10,
@@ -85,7 +83,7 @@
         content: null,
         listLoading: true,
         orderBys: [
-          'id', '-id', 'title', '-title'
+          'id', '-id', 'age', '-age'
         ]
       }
     },
@@ -104,7 +102,7 @@
         if (this.queryParams.order_by === '') {
           this.queryParams.order_by = 'id'
         }
-        this.ajax.get('/books', {
+        this.ajax.get('/users', {
           params: this.queryParams
         }).then(response => {
           this.count = response.info.count
