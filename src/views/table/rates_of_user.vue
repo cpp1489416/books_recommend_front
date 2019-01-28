@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input style="width: 200px;" class="filter-item" v-model="queryParams.name" placeholder="name"
+      <el-input style="width: 200px;" class="filter-item" v-model="userId" placeholder="User Id"
                 @keyup.native.enter="reloadPage"/>
       <el-input style="width: 200px;" class="filter-item" v-model="queryParams.location" placeholder="location"
                 @keyup.native.enter="reloadPage"/>
@@ -25,24 +25,19 @@
         </template>
       </el-table-column>
       -->
-      <el-table-column label="id" width="110" align="center">
-        <template slot-scope="Book title">
-          {{scope.row.title }}
+      <el-table-column label="Book Title" align="center">
+        <template slot-scope="scope">
+          {{scope.row.book.title }}
         </template>
       </el-table-column>
-      <el-table-column label="name">
+      <el-table-column label="User Name">
         <template slot-scope="scope">
-          {{ scope.row.name}}
+          {{username}}
         </template>
       </el-table-column>
-      <el-table-column label="location" align="center">
+      <el-table-column label="Rating">
         <template slot-scope="scope">
-          <span>{{ scope.row.location }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="age" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.age }}
+          {{scope.row.rating}}
         </template>
       </el-table-column>
     </el-table>
@@ -82,16 +77,19 @@
         count: 0,
         content: null,
         listLoading: true,
+        username: '',
         orderBys: [
           'id', '-id', 'age', '-age'
-        ]
+        ],
+        userId: '',
       }
     },
     created() {
+      this.userId = this.$route.params.id
       this.reloadPage()
     },
     methods: {
-      getList: function (info) {
+      getList: async function (info) {
         this.listLoading = true
         if (info !== undefined) {
           this.queryParams.page_number = info.page
@@ -102,7 +100,10 @@
         if (this.queryParams.order_by === '') {
           this.queryParams.order_by = 'id'
         }
-        this.ajax.get('/ratings/user/' + this.$route.params.id, {
+        await this.ajax.get('/users/' + this.$route.params.id).then(response => {
+          this.username = response.info.name
+        })
+        await this.ajax.get('/ratings/user/' + this.$route.params.id, {
           params: this.queryParams
         }).then(response => {
           this.count = response.info.count
@@ -112,6 +113,12 @@
         })
       },
       reloadPage: function () {
+        if (this.userId === '') {
+          this.userId = '1'
+        }
+        if (this.$route.params.id !== this.userId) {
+          this.$router.push('/example/rates_of_user/' + this.userId)
+        }
         this.getList()
       }
     },
