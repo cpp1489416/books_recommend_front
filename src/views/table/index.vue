@@ -1,8 +1,20 @@
 <template>
   <div class="app-container">
+    <div class="filter-container">
+      <el-input style="width: 200px;" class="filter-item"/>
+      <el-button class="filter-item" type="primary" icon="el-icon-search">
+      </el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit">
+      </el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-download">
+      </el-button>
+      <el-checkbox class="filter-item" style="margin-left:15px;">
+      </el-checkbox>
+    </div>
+
     <el-table
       v-loading="listLoading"
-      :data="list"
+      :data="content"
       element-loading-text="Loading"
       border
       fit
@@ -39,11 +51,18 @@
         </template>
       </el-table-column>
     </el-table>
+    <pagination
+      :total="count"
+      :page.sync="queryParams.page_number"
+      :limit.sync="queryParams.page_size"
+      @pagination="getList"/>
   </div>
 </template>
 
 <script>
   import {getList} from '@/api/table'
+  import merge from 'webpack-merge'
+  import Pagination from '@/components/Pagination'
 
   export default {
     filters: {
@@ -59,34 +78,47 @@
     data() {
       return {
         queryParams: {
-          name: 'a',
-          desc: '',
-          order_by: '-desc',
+          name: null,
+          desc: null,
+          order_by: 'id',
           page_number: 1,
-          page_size: 2,
+          page_size: 10,
         },
-        list: null,
+        count: 40,
+        content: null,
         listLoading: true
       }
     },
     created() {
       this.ajax.get('/books', {
-        params: this.queryParams
+        params: this.$route.query
       }).then(response => {
         console.log(response)
-        this.list = response.info.content
+        this.content = response.info.content
+        this.count = response.info.count
         this.listLoading = false
       }, function () {
       })
     },
     methods: {
-      fetchData() {
+      getList: function (info) {
         this.listLoading = true
-        getList(this.listQuery).then(response => {
-          this.list = response.data.items
+        if (info !== null) {
+          this.queryParams.page_number = info.page
+          this.queryParams.page_size = info.limit
+        }
+        this.ajax.get('/books', {
+          params: this.queryParams
+        }).then(response => {
+          this.count = response.info.count
+          this.content = response.info.content
           this.listLoading = false
+        }, function () {
         })
       }
+    },
+    components: {
+      Pagination
     }
   }
 </script>
