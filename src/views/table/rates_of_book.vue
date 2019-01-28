@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input style="width: 200px;" class="filter-item" v-model="userId" placeholder="User Id"
+      <el-input style="width: 200px;" class="filter-item" v-model="isbn" placeholder="Book Isbn"
                 @keyup.native.enter="reloadPage"/>
       <el-select v-model="queryParams.order_by" class="filter-item">
         <el-option v-for="item in orderBys" :value="item"/>
@@ -25,12 +25,12 @@
       -->
       <el-table-column label="Book Title" align="center">
         <template slot-scope="scope">
-          {{scope.row.book.title }}
+          {{ bookTitle }}
         </template>
       </el-table-column>
       <el-table-column label="User Name">
         <template slot-scope="scope">
-          {{username}}
+          {{scope.row.user.name}}
         </template>
       </el-table-column>
       <el-table-column label="Rating">
@@ -68,7 +68,7 @@
         queryParams: {
           name: null,
           location: null,
-          order_by: 'id',
+          order_by: 'isbn',
           page_number: 1,
           page_size: 10,
         },
@@ -77,13 +77,13 @@
         listLoading: true,
         username: '',
         orderBys: [
-          'id', '-id', 'age', '-age'
+          'id', '-id',
         ],
-        userId: '',
+        isbn: '',
       }
     },
     created() {
-      this.userId = this.$route.params.id
+      this.isbn = this.$route.params.isbn
       this.reloadPage()
     },
     methods: {
@@ -98,10 +98,10 @@
         if (this.queryParams.order_by === '') {
           this.queryParams.order_by = 'id'
         }
-        await this.ajax.get('/users/' + this.$route.params.id).then(response => {
-          this.username = response.info.name
+        await this.ajax.get('/books/isbn/' + this.$route.params.isbn).then(response => {
+          this.bookTitle = response.info.title
         })
-        await this.ajax.get('/ratings/user/' + this.$route.params.id, {
+        await this.ajax.get('/ratings/book/isbn/' + this.$route.params.isbn, {
           params: this.queryParams
         }).then(response => {
           this.count = response.info.count
@@ -111,11 +111,11 @@
         })
       },
       reloadPage: function () {
-        if (this.userId === '') {
-          this.userId = '1'
+        if (this.isbn=== '') {
+          this.isbn= '1'
         }
-        if (this.$route.params.id !== this.userId) {
-          this.$router.push('/example/rates_of_user/' + this.userId)
+        if (this.$route.params.isbn!== this.isbn) {
+          this.$router.push('/example/rates_of_book/' + this.isbn)
         }
         this.getList()
       }

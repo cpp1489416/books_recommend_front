@@ -63,6 +63,12 @@ export const constantRouterMap = [
         meta: { title: 'Rates Of User', icon: 'table' }
       },
       {
+        path: 'rates_of_book/:isbn',
+        name: 'rates_of_book',
+        component: () => import('@/views/table/rates_of_book'),
+        meta: { title: 'Rates Of Book', icon: 'table' }
+      },
+      {
         path: 'tree',
         name: 'Tree',
         component: () => import('@/views/tree/index'),

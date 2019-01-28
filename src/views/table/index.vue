@@ -1,6 +1,8 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-input style="width: 200px;" class="filter-item" v-model="queryParams.isbn" placeholder="isbn"
+                @keyup.native.enter="reloadPage"/>
       <el-input style="width: 200px;" class="filter-item" v-model="queryParams.title" placeholder="title"
                 @keyup.native.enter="reloadPage"/>
       <el-select v-model="queryParams.order_by" class="filter-item">
@@ -77,6 +79,7 @@
       return {
         queryParams: {
           title: null,
+          isbn: null,
           order_by: 'id',
           page_number: 1,
           page_size: 10,
