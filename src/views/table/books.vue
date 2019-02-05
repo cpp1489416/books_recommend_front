@@ -30,7 +30,7 @@
           <img :src="scope.row.image_url" height="40px"/>
         </template>
       </el-table-column>
-      <el-table-column label="ISBN" width="110" align="center">
+      <el-table-column label="isbn" width="110" align="center">
         <template slot-scope="scope">
           {{scope.row.isbn}}
         </template>
@@ -48,6 +48,12 @@
       <el-table-column label="year" width="110" align="center">
         <template slot-scope="scope">
           {{ scope.row.published_year }}
+        </template>
+      </el-table-column>
+      <el-table-column label="action" align="center" width="150" class-name="small-padding fixed-width">
+        <template slot-scope="scope">
+          <el-button type="primary" size="mini">edit</el-button>
+          <el-button size="mini"> ratings </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -88,7 +94,7 @@
         content: null,
         listLoading: true,
         orderBys: [
-          'id', '-id', 'title', '-title'
+          'id', '-id', 'title', '-title', 'isbn', '-isbn'
         ]
       }
     },
