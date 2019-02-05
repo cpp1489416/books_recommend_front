@@ -8,10 +8,11 @@ module.exports = {
   dev: {
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/books_recommend/',
     proxyTable: {
-      '/api': {
-        target: 'http://localhost:8000',
+      '/books_recommend/api': {
+        target: 'https://coopoopoo.xyz/',
+        secure: false,
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
