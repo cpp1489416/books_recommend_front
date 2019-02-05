@@ -11,11 +11,11 @@ module.exports = {
     assetsPublicPath: '/books_recommend/',
     proxyTable: {
       '/books_recommend/api': {
-        target: 'https://coopoopoo.xyz/',
+        target: 'http://localhost:8000/',
         secure: false,
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/books_recommend/api': '/'
         }
       }
     },

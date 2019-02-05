@@ -47,7 +47,7 @@ export const constantRouterMap = [
       {
         path: 'books',
         name: 'Books',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/table/books'),
         meta: { title: 'Books', icon: 'table' }
       },
       {
@@ -57,15 +57,15 @@ export const constantRouterMap = [
         meta: { title: 'Users', icon: 'table' }
       },
       {
-        path: 'rates_of_user/:id',
-        name: 'rates_of_user',
-        component: () => import('@/views/table/rates_of_user'),
+        path: 'ratings_of_user/:id',
+        name: 'ratings_of_user',
+        component: () => import('@/views/table/ratings_of_user'),
         meta: { title: 'Rates Of User', icon: 'table' }
       },
       {
-        path: 'rates_of_book/:isbn',
-        name: 'rates_of_book',
-        component: () => import('@/views/table/rates_of_book'),
+        path: 'ratings_of_book/:isbn',
+        name: 'ratings_of_book',
+        component: () => import('@/views/table/ratings_of_book'),
         meta: { title: 'Rates Of Book', icon: 'table' }
       },
       {
