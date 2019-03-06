@@ -18,11 +18,6 @@ Mock.XHR.prototype.send = function() {
 //   timeout: '350-600'
 // })
 
-// 登录相关
-Mock.mock(/\/login\/login/, 'post', loginAPI.loginByUsername)
-Mock.mock(/\/login\/logout/, 'post', loginAPI.logout)
-Mock.mock(/\/user\/info\.*/, 'get', loginAPI.getUserInfo)
-
 // 文章相关
 Mock.mock(/\/article\/list/, 'get', articleAPI.getList)
 Mock.mock(/\/article\/detail/, 'get', articleAPI.getArticle)
@@ -35,5 +30,44 @@ Mock.mock(/\/search\/user/, 'get', remoteSearchAPI.searchUser)
 
 // 账单相关
 Mock.mock(/\/transaction\/list/, 'get', transactionAPI.getList)
+
+Mock.mock('http://www.bai.com', 'get', function(options) {
+  return {
+    id: 'dd'
+  }
+})
+
+Mock.mock('api/login', 'post', function(options) {
+  return {
+    code: '0',
+    msg: '',
+    info: {
+      name: 'admin',
+      password: 'password'
+    }
+  }
+})
+
+Mock.mock('api/user/info', 'get', function(options) {
+  return {
+    code: '0',
+    msg: '',
+    info: {
+      'id': 1,
+      'password': 'pbkdf2_sha256$120000$E4raFlMZnM10$u0l5Xnd8x6fs8tSU9mkfdPnTBhOPDugEHYz6A0bJS+Q=',
+      'last_login': '2019-03-01T13:47:55.207Z',
+      'is_superuser': true,
+      'username': 'admin',
+      'first_name': '',
+      'last_name': '',
+      'email': 'none',
+      'is_staff': true,
+      'is_active': true,
+      'date_joined': '2019-02-05T08:21:49.638Z',
+      'groups': [],
+      'user_permissions': []
+    }
+  }
+})
 
 export default Mock

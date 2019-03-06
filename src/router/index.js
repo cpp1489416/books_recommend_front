@@ -40,7 +40,7 @@ export const constantRouterMap = [
   {
     path: '/example',
     component: Layout,
-    redirect: '/example/table',
+    redirect: '/example/books',
     name: 'Example',
     meta: { title: 'Example', icon: 'example' },
     children: [
@@ -57,12 +57,14 @@ export const constantRouterMap = [
         meta: { title: 'Users', icon: 'table' }
       },
       {
+        hidden: true,
         path: 'ratings_of_user/:id',
         name: 'ratings_of_user',
         component: () => import('@/views/table/ratings_of_user'),
         meta: { title: 'Rates Of User', icon: 'table' }
       },
       {
+        hidden: true,
         path: 'ratings_of_book/:isbn',
         name: 'ratings_of_book',
         component: () => import('@/views/table/ratings_of_book'),

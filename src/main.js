@@ -17,6 +17,8 @@ import '@/permission' // permission control
 
 import request from '@/utils/request'
 
+import '@/mock'
+
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false

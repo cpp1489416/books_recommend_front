@@ -8,14 +8,14 @@ module.exports = {
   dev: {
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/books_recommend/',
+    assetsPublicPath: '/',
     proxyTable: {
-      '/books_recommend/api': {
+      '/api': {
         target: 'http://localhost:8000/',
         secure: false,
         changeOrigin: true,
         pathRewrite: {
-          '^/books_recommend/api': '/'
+          '^/api': '/'
         }
       }
     },
@@ -66,7 +66,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: '/books_recommend/',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps
