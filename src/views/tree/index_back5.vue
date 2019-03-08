@@ -31,16 +31,17 @@ import Anchor from '../../utils/gl/things/Anchor'
 import ObjMesh from '../../utils/gl/things/ObjMesh'
 import TextureTechnique from '../../utils/gl/techniques/TextureTechnique'
 import Quad from '../../utils/gl/things/Quad'
-import Scene from '../../utils/gl/Scene'
 
 export default {
   data() {
     return {
       canvas: null,
-      scene: null,
       camera: null,
       cube: null,
       anchor: null,
+      technique: null,
+      textureTechnique: null,
+      skyboxTechnique: null,
       gl: null,
       quad: null,
       now: 1,
@@ -91,15 +92,36 @@ export default {
       this.mesh.transform.scale[2] = -1
       this.quad = new Quad(this.gl)
 
-      this.scene = new Scene(this.gl)
-      this.scene.resize(this.canvas.width, this.canvas.height)
-      this.scene.addComponent(this.camera)
-      this.scene.addComponent(this.mesh)
+      this.technique = new BasicTechnique(this.gl)
+
+      this.technique.addComponent(this.camera)
+      // this.technique.addComponent(this.cube)
+      // this.technique.addComponent(this.anchor)
+
+      this.textureTechnique = new TextureTechnique(this.gl)
+      this.textureTechnique.addComponent(this.camera)
+      // this.textureTechnique.addComponent(this.quad)
+      this.textureTechnique.addComponent(this.mesh)
+
+      this.gl.clearColor(0, 0.5, 0, 1)
+      // this.gl.enable(this.gl.CULL_FACE)
+      // this.gl.frontFace(this.gl.CW)
+      this.gl.enable(this.gl.DEPTH_TEST)
+      this.gl.depthFunc(this.gl.LESS)
+      // this.gl.depthMask(this.gl.TRUE)
+      // this.gl.enable(this.gl.DEPTH_CLAMP)
+
+      this.skyboxTechnique = new SkyboxTechnique(this.gl)
+      this.skyboxTechnique.camera = this.camera
+      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height)
       setInterval(this.timePass, 100)
     },
 
     paintGl: function() {
-      this.scene.draw()
+      this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT)
+      this.skyboxTechnique.drawThings()
+      this.technique.drawThings()
+      this.textureTechnique.drawThings()
     },
 
     timePass: function() {
