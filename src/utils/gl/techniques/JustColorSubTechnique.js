@@ -12,6 +12,13 @@ export default class extends Technique {
     this.program.addShader(this.vertexShader).addShader(this.fragmentShader).link()
   }
 
+  updateProjectionMatrixAndViewMatrix() {
+    var projectionId = this.getProjectionMatrixUniform()
+    var viewId = this.getViewMatrixUniform()
+    this.gl.uniformMatrix4fv(projectionId, this.gl.FALSE, this.camera.getProjectionMatrix())
+    this.gl.uniformMatrix4fv(viewId, this.gl.FALSE, this.camera.getViewMatrix())
+  }
+
   getPositionAttribute() { return this.getAttributeLocation('position') }
   getColorAttribute() { return this.getAttributeLocation('color') }
   getProjectionMatrixUniform() { return this.getUniformLocation('projectionMatrix') }

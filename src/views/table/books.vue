@@ -1,10 +1,18 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input style="width: 200px;" class="filter-item" v-model="queryParams.isbn" placeholder="isbn"
-                @keyup.native.enter="reloadPage"/>
-      <el-input style="width: 200px;" class="filter-item" v-model="queryParams.title" placeholder="title"
-                @keyup.native.enter="reloadPage"/>
+      <el-input
+        v-model="queryParams.isbn"
+        style="width: 200px;"
+        class="filter-item"
+        placeholder="isbn"
+        @keyup.native.enter="reloadPage"/>
+      <el-input
+        v-model="queryParams.title"
+        style="width: 200px;"
+        class="filter-item"
+        placeholder="title"
+        @keyup.native.enter="reloadPage"/>
       <el-select v-model="queryParams.order_by" class="filter-item">
         <el-option v-for="item in orderBys" :value="item"/>
       </el-select>
@@ -27,17 +35,17 @@
       -->
       <el-table-column label="" width="80" align="center">
         <template slot-scope="scope">
-          <img :src="scope.row.image_url" height="40px"/>
+          <img :src="scope.row.image_url" height="40px">
         </template>
       </el-table-column>
       <el-table-column label="isbn" width="110" align="center">
         <template slot-scope="scope">
-          {{scope.row.isbn}}
+          {{ scope.row.isbn }}
         </template>
       </el-table-column>
       <el-table-column label="title">
         <template slot-scope="scope">
-          {{ scope.row.title}}
+          {{ scope.row.title }}
         </template>
       </el-table-column>
       <el-table-column label="author" width="110" align="center">
@@ -66,68 +74,68 @@
 </template>
 
 <script>
-  import {getList} from '@/api/table'
-  import merge from 'webpack-merge'
-  import Pagination from '@/components/Pagination'
+import { getList } from '@/api/table'
+import merge from 'webpack-merge'
+import Pagination from '@/components/Pagination'
 
-  export default {
-    filters: {
-      statusFilter(status) {
-        const statusMap = {
-          published: 'success',
-          draft: 'gray',
-          deleted: 'danger'
-        }
-        return statusMap[status]
+export default {
+  filters: {
+    statusFilter(status) {
+      const statusMap = {
+        published: 'success',
+        draft: 'gray',
+        deleted: 'danger'
       }
-    },
-    data() {
-      return {
-        queryParams: {
-          title: null,
-          isbn: null,
-          order_by: 'id',
-          page_number: 1,
-          page_size: 10,
-        },
-        count: 0,
-        content: null,
-        listLoading: true,
-        orderBys: [
-          'id', '-id', 'title', '-title', 'isbn', '-isbn'
-        ]
-      }
-    },
-    created() {
-      this.reloadPage()
-    },
-    methods: {
-      getList: function (info) {
-        this.listLoading = true
-        if (info !== undefined) {
-          this.queryParams.page_number = info.page
-          this.queryParams.page_size = info.limit
-        } else {
-          this.queryParams.page_number = 1
-        }
-        if (this.queryParams.order_by === '') {
-          this.queryParams.order_by = 'id'
-        }
-        this.ajax.get('/books', {
-          params: this.queryParams
-        }).then(response => {
-          this.count = response.info.count
-          this.content = response.info.content
-          this.listLoading = false
-        }, function () {
-        })
+      return statusMap[status]
+    }
+  },
+  components: {
+    Pagination
+  },
+  data() {
+    return {
+      queryParams: {
+        title: null,
+        isbn: null,
+        order_by: 'id',
+        page_number: 1,
+        page_size: 10
       },
-      reloadPage: function () {
-        this.getList()
+      count: 0,
+      content: null,
+      listLoading: true,
+      orderBys: [
+        'id', '-id', 'title', '-title', 'isbn', '-isbn'
+      ]
+    }
+  },
+  created() {
+    this.reloadPage()
+  },
+  methods: {
+    getList: function(info) {
+      this.listLoading = true
+      if (info !== undefined) {
+        this.queryParams.page_number = info.page
+        this.queryParams.page_size = info.limit
+      } else {
+        this.queryParams.page_number = 1
       }
+      if (this.queryParams.order_by === '') {
+        this.queryParams.order_by = 'id'
+      }
+      this.ajax.get('/books', {
+        params: this.queryParams
+      }).then(response => {
+        this.count = response.info.count
+        this.content = response.info.content
+        this.listLoading = false
+      }, function() {
+      })
     },
-    components: {
-      Pagination
+    reloadPage: function() {
+      this.getList()
     }
   }
+}
 </script>

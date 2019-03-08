@@ -31,10 +31,8 @@ export default class extends Technique {
   updateProjectionMatrixAndViewMatrix() {
     var projectionId = this.getProjectionMatrixUniform()
     var viewId = this.getViewMatrixUniform()
-    this.gl.uniformMatrix4fv(projectionId, this.gl.FALSE, this.camera.projectionMatrix)
-    var view = mat4.clone(this.camera.viewMatrix)
-    view[12] = view[13] = view[14] = 0
-    this.gl.uniformMatrix4fv(viewId, this.gl.FALSE, view)
+    this.gl.uniformMatrix4fv(projectionId, this.gl.FALSE, this.camera.getProjectionMatrix())
+    this.gl.uniformMatrix4fv(viewId, this.gl.FALSE, this.camera.getSkyboxViewMatrix())
   }
 
   getProgram() { return this.program } // get current program

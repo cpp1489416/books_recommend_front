@@ -16,6 +16,8 @@
         <el-button @click="pitch">pitch</el-button>
         <el-input v-model="yallDistance"/>
         <el-button @click="yall">yall</el-button>
+        <el-input v-model="rollDistance"/>
+        <el-button @click="roll">roll</el-button>
       </el-main>
     </el-container>
   </div>
@@ -23,15 +25,13 @@
 
 <script>
 import Camera from '../../utils/gl/common/Camera'
-import BasicTechnique from '../../utils/gl/techniques/BasicTechnique'
 import Cube from '../../utils/gl/things/Cube'
-import { vec3 } from 'gl-matrix'
-import SkyboxTechnique from '../../utils/gl/techniques/SkyboxTechnique'
+import { vec3, mat4 } from 'gl-matrix'
 import Anchor from '../../utils/gl/things/Anchor'
 import ObjMesh from '../../utils/gl/things/ObjMesh'
-import TextureTechnique from '../../utils/gl/techniques/TextureTechnique'
 import Quad from '../../utils/gl/things/Quad'
 import Scene from '../../utils/gl/Scene'
+import MatrixTransform from '../../utils/gl/transforms/MatrixTransform'
 
 export default {
   data() {
@@ -46,9 +46,10 @@ export default {
       now: 1,
       walkDistance: 1,
       flyDistance: 1,
-      strafeDistance: 0,
-      pitchDistance: 0,
-      yallDistance: 0
+      strafeDistance: 0.1,
+      pitchDistance: 0.1,
+      yallDistance: 0.1,
+      rollDistance: 0.1
     }
   },
   watch: {
@@ -58,8 +59,7 @@ export default {
   mounted() {
     var canvas = this.$refs.tree
     this.canvas = canvas
-    this.$nextTick(function() {
-    })
+    this.repaint()
   },
 
   methods: {
@@ -77,9 +77,9 @@ export default {
 
     initGl: async function() {
       this.camera = new Camera(this.gl)
-      this.camera.lookAt([50, 50, -50], [0, 1, 0], [0, 1, 0])
-      // this.camera.perspective(-50, 50, 50, -50, -4.3, 500)
-      this.camera.perspective2(3.14 / 2 / 2, 0.1, 10000)
+      this.camera.lookAt([80, 80, -80], [0, 30, 0], [0, 1, 0])
+      this.camera.perspective(3.14 / 2 / 2, 0.1, 10000)
+      this.camera.ortho(-5, 5, -5, 5, 0.001, 100)
       this.camera.setAspect(2)
       this.camera.transformType = Camera.TransformType.LandObject
 
@@ -88,7 +88,7 @@ export default {
       this.anchor.transform.scale = vec3.fromValues(2, 2, 2)
 
       this.mesh = new ObjMesh(this.gl, '/static/models/pancat/pancat.obj')
-      this.mesh.transform.scale[2] = -1
+      this.mesh.transform = new MatrixTransform()
       this.quad = new Quad(this.gl)
 
       this.scene = new Scene(this.gl)
@@ -96,6 +96,15 @@ export default {
       this.scene.addComponent(this.camera)
       this.scene.addComponent(this.mesh)
       setInterval(this.timePass, 100)
+
+      var m = mat4.create()
+      mat4.lookAt(m, [0, 0, 0], [0, 0, -1], [0, 1, 0])
+      // console.log(m)
+
+      mat4.perspective(m, 3.14 / 2 / 2, 1, 0.1, 100)
+      // console.log('persp: ' + m)
+      mat4.ortho(m, -1, 1, -1, 1, 0.1, 100)
+      // console.log('ortho: ' + m)
     },
 
     paintGl: function() {
@@ -103,12 +112,16 @@ export default {
     },
 
     timePass: function() {
-      this.paintGl()
-      return
       if (this.mesh !== null) {
-        this.now += 0.1
+        this.now += 0.2
+        this.mesh.transform.matrix = mat4.create()
+        var matrix = this.mesh.transform.matrix
+        mat4.rotate(matrix, matrix, this.now, [0, 1, 0])
+        // mat4.translate(matrix, matrix, [0, 0, 10])
+        mat4.scale(matrix, matrix, [3, 3, 3])
         this.mesh.transform.rotation = vec3.fromValues(this.now, this.now, this.now)
       }
+      this.paintGl()
     },
     walk() {
       this.camera.walk(Number(this.walkDistance))
@@ -124,6 +137,9 @@ export default {
     },
     yall() {
       this.camera.yall(Number(this.yallDistance))
+    },
+    roll() {
+      this.camera.roll(Number(this.rollDistance))
     }
   }
 }

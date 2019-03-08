@@ -9,8 +9,12 @@ export default class Camera {
     Local: 2
   }
 
-  constructor(gl) {
-    this.gl = gl
+  static ProjectionType = {
+    Perspective: 0,
+    Ortho: 1
+  }
+
+  constructor() {
     this.transformType = Camera.TransformType.LandObject
   }
 
@@ -18,8 +22,20 @@ export default class Camera {
     return this.projectionMatrix
   }
 
+  getNoneAspectProjectionMatrix() {
+    var projection = this.getProjectionMatrix()
+    projection[0] = projection[5]
+    return projection
+  }
+
   getViewMatrix() {
     return this.viewMatrix
+  }
+
+  getSkyboxViewMatrix() {
+    var view = mat4.clone(this.getViewMatrix())
+    view[12] = view[13] = view[14] = 0
+    return view
   }
 
   lookAt(eye, center, up) {
@@ -44,6 +60,13 @@ export default class Camera {
     mat4.lookAt(viewMatrix, eye, center, up)
   }
 
+  // just from away look
+  lookAway(vec) {
+    var viewMatrix = mat4.create()
+    mat4.translate(viewMatrix, viewMatrix, vec)
+    this.viewMatrix = viewMatrix
+  }
+
   updateViewMatrix() {
     var x = -vec3.dot(this.xVector, this.position)
     var y = -vec3.dot(this.yVector, this.position)
@@ -61,12 +84,17 @@ export default class Camera {
     this.viewMatrix = view
   }
 
-  perspective2(fovy, near, far) {
+  perspective(fovy, near, far) {
     this.fovy = fovy
     this.near = near
     this.far = far
     this.aspect = 0.8
     this.updateProjectionMatrix()
+  }
+
+  ortho(left, right, bottom, top, near, far) {
+    this.projectionMatrix = mat4.create()
+    mat4.ortho(this.projectionMatrix, left, right, bottom, top, near, far)
   }
 
   setAspect(aspect) {
@@ -150,6 +178,21 @@ export default class Camera {
     }
     vec4.transformMat4(this.xVector, this.xVector, rm)
     vec4.transformMat4(this.zVector, this.zVector, rm)
+    this.vec4ToVec3()
+    this.updateViewMatrix()
+  }
+
+  roll(distance) {
+    this.vec3ToVec4()
+    var rm = mat4.create()
+    if (this.transformType === Camera.Local) {
+      mat4.rotate(rm, rm, distance, this.zVector)
+      vec4.transformMat4(this.position, this.position, rm)
+    } else {
+      mat4.rotate(rm, rm, distance, this.zVector)
+    }
+    vec4.transformMat4(this.xVector, this.xVector, rm)
+    vec4.transformMat4(this.yVector, this.yVector, rm)
     this.vec4ToVec3()
     this.updateViewMatrix()
   }

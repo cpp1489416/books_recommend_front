@@ -52,9 +52,8 @@ export default class {
   }
 
   updateModelMatrix(modelMatrix) {
-    this.modelMatrix = modelMatrix
     var modelMatrixId = this.getModelMatrixUniform()
-    this.gl.uniformMatrix4fv(modelMatrixId, this.gl.FALSE, this.modelMatrix)
+    this.gl.uniformMatrix4fv(modelMatrixId, this.gl.FALSE, modelMatrix)
   }
 
   updateProjectionMatrixAndViewMatrix() {

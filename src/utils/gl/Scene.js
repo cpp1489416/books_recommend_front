@@ -1,15 +1,19 @@
 import Camera from './common/Camera'
 import SkyboxTechnique from './techniques/SkyboxTechnique'
 import TextureTechnique from './techniques/TextureTechnique'
-import BasicTechnique from './techniques/BasicTechnique'
+import JustColorSubTechnique from './techniques/JustColorSubTechnique'
 import ObjMesh from './things/ObjMesh'
+import Anchor from './things/Anchor'
+import { vec3, mat4 } from 'gl-matrix'
+import MatrixTransform from './transforms/MatrixTransform'
+import Cube from './things/Cube'
 
 export default class {
   constructor(gl) {
     this.gl = gl
     this.skyboxTechnique = new SkyboxTechnique(gl)
     this.textureTechnique = new TextureTechnique(gl)
-    this.basicTechnique = new BasicTechnique(gl)
+    this.supportTechnique = new JustColorSubTechnique(gl)
     this.initGl()
   }
 
@@ -18,7 +22,6 @@ export default class {
       this.camera = component
       this.skyboxTechnique.addComponent(component)
       this.textureTechnique.addComponent(component)
-      this.basicTechnique.addComponent(component)
     } else if (component instanceof ObjMesh) {
       this.textureTechnique.addComponent(component)
     }
@@ -34,10 +37,26 @@ export default class {
     this.gl.clear(this.gl.DEPTH_BUFFER_BIT)
     this.skyboxTechnique.drawThings()
     this.textureTechnique.drawThings()
+    this.gl.viewport(0, 0, 60, 60)
+    this.gl.clear(this.gl.DEPTH_BUFFER_BIT)
+    this.anchor.transform.matrix = mat4.create()
+    mat4.mul(this.anchor.transform.matrix, this.anchor.transform.matrix, this.camera.getSkyboxViewMatrix())
+    mat4.translate(this.anchor.transform.matrix, this.anchor.transform.matrix, [-0.5, -0.5, -0.5])
+    mat4.scale(this.anchor.transform.matrix, this.anchor.transform.matrix, [4, 4, 4])
+    this.supportTechnique.drawThings()
   }
 
   initGl() {
+    // enviroment
     this.gl.enable(this.gl.DEPTH_TEST)
     this.gl.depthFunc(this.gl.LESS)
+
+    this.anchor = new Anchor(this.gl)
+    this.anchor.transform = new MatrixTransform()
+    this.supportTechnique.camera = new Camera()
+    this.supportTechnique.camera.ortho(-5, 5, -5, 5, 0.001, 100)
+    this.supportTechnique.camera.lookAway([0, 0, -4])
+    console.log(this.supportTechnique.camera.viewMatrix)
+    this.supportTechnique.addComponent(this.anchor)
   }
 }
