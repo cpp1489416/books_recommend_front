@@ -7,12 +7,13 @@ export default class {
     this.things = []
     this.camera = null
     this.program = null
+    this.create()
   }
 
   create() {
     if (!this.created) {
-      this.onCreate()
       this.created = true
+      this.onCreate()
     }
   }
 

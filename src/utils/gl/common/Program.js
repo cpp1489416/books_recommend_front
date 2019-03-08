@@ -32,6 +32,10 @@ export default class {
     if (!this.linked) {
       this.linked = true
       this.gl.linkProgram(this.id)
+      var log = this.gl.getProgramInfoLog(this.id)
+      if (log !== null && log.trim() !== '') {
+        alert(log)
+      }
     }
     return this
   }

@@ -18,7 +18,6 @@ export default class extends Technique {
   getViewMatrixUniform() { return this.getUniformLocation('viewMatrix') }
   getModelMatrixUniform() { return this.getUniformLocation('modelMatrix') }
   getTexture2DUniform() { return this.getUniformLocation('picture') }
-  getTextureCoordAttribute() { return this.getAttributeLocation('textureCoord') }
 
   getThingRequirement() {
     return {

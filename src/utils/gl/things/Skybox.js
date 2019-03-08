@@ -17,7 +17,7 @@ export default class extends Thing {
     var texturesDir = [cube_map_px_dir, cube_map_nx_dir, cube_map_py_dir, cube_map_ny_dir, cube_map_pz_dir, cube_map_nz_dir]
     this.textures = []
     for (var i = 0; i < 6; i++) {
-      this.textures.push(new Texture(this.gl).fromImage(texturesDir[i]))
+      this.textures.push(new Texture(this.gl).fromImage(texturesDir[i]).setWrap(this.gl.CLAMP_TO_EDGE))
     }
     var vertices = [
       new Float32Array([//  left face, +X, CCW
@@ -79,7 +79,7 @@ export default class extends Thing {
     for (let i = 0; i < 6; ++i) {
       this.vboPositions[i] = new Buffer(this.gl, this.gl.ARRAY_BUFFER, this.gl.STATIC_DRAW)
       this.vboColors = new Buffer(this.gl, this.gl.ARRAY_BUFFER, this.gl.STATIC_DRAW)
-      this.vboTextureCoords[i] = new Buffer(this.gl, this.gl.TEXTURE_BUFFER, this.gl.STATIC_DRAW)
+      this.vboTextureCoords[i] = new Buffer(this.gl, this.gl.ARRAY_BUFFER, this.gl.STATIC_DRAW)
 
       this.vaos[i] = new VertexArrayObject(this.gl).bind()
       this.vboPositions[i].bind()
