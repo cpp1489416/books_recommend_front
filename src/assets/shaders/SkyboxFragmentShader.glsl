@@ -4,6 +4,7 @@ precision mediump float;
 
 varying vec2 textureCoordVarying;
 uniform sampler2D skybox;
+uniform samplerCube dd;
 
 void main()
 {

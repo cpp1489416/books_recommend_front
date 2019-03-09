@@ -7,6 +7,7 @@ import Anchor from './things/Anchor'
 import { vec3, mat4 } from 'gl-matrix'
 import MatrixTransform from './transforms/MatrixTransform'
 import Cube from './things/Cube'
+import BasicCamera from './cameras/BasicCamera'
 
 export default class {
   constructor(gl) {
@@ -53,10 +54,9 @@ export default class {
 
     this.anchor = new Anchor(this.gl)
     this.anchor.transform = new MatrixTransform()
-    this.supportTechnique.camera = new Camera()
+    this.supportTechnique.camera = new BasicCamera()
     this.supportTechnique.camera.ortho(-5, 5, -5, 5, 0.001, 100)
     this.supportTechnique.camera.lookAway([0, 0, -4])
-    console.log(this.supportTechnique.camera.viewMatrix)
     this.supportTechnique.addComponent(this.anchor)
   }
 }

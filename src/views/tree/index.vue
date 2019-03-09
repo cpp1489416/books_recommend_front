@@ -6,6 +6,10 @@
       </el-aside>
       <el-main>
         <el-button @click="repaint">repaint</el-button>
+        <el-switch
+          v-model="rotating"
+          active-text="rotating"
+          inactive-text="static"/>
         <el-input v-model="walkDistance"/>
         <el-button @click="walk">walk</el-button>
         <el-input v-model="flyDistance"/>
@@ -18,6 +22,7 @@
         <el-button @click="yall">yall</el-button>
         <el-input v-model="rollDistance"/>
         <el-button @click="roll">roll</el-button>
+        <el-button @click="reflect">reflect</el-button>
       </el-main>
     </el-container>
   </div>
@@ -32,6 +37,8 @@ import ObjMesh from '../../utils/gl/things/ObjMesh'
 import Quad from '../../utils/gl/things/Quad'
 import Scene from '../../utils/gl/Scene'
 import MatrixTransform from '../../utils/gl/transforms/MatrixTransform'
+import PlaneReflectedCamera from '../../utils/gl/cameras/PlaneReflectedCamera'
+import BasicCamera from '../../utils/gl/cameras/BasicCamera'
 
 export default {
   data() {
@@ -39,6 +46,7 @@ export default {
       canvas: null,
       scene: null,
       camera: null,
+      reflectedCamera: null,
       cube: null,
       anchor: null,
       gl: null,
@@ -49,7 +57,8 @@ export default {
       strafeDistance: 0.1,
       pitchDistance: 0.1,
       yallDistance: 0.1,
-      rollDistance: 0.1
+      rollDistance: 0.1,
+      rotating: false
     }
   },
   watch: {
@@ -76,24 +85,25 @@ export default {
     },
 
     initGl: async function() {
-      this.camera = new Camera(this.gl)
+      this.camera = new BasicCamera()
       this.camera.lookAt([80, 80, -80], [0, 30, 0], [0, 1, 0])
       this.camera.perspective(3.14 / 2 / 2, 0.1, 10000)
       this.camera.ortho(-5, 5, -5, 5, 0.001, 100)
       this.camera.setAspect(2)
-      this.camera.transformType = Camera.TransformType.LandObject
+      this.camera.transformType = BasicCamera.TransformType.LandObject
+      this.reflectedCamera = new PlaneReflectedCamera(this.camera)
 
       this.cube = new Cube(this.gl)
       this.anchor = new Anchor(this.gl)
       this.anchor.transform.scale = vec3.fromValues(2, 2, 2)
 
-      this.mesh = new ObjMesh(this.gl, '/static/models/pancat/pancat.obj')
+      this.mesh = new ObjMesh(this.gl, '/static/models/tails/Tails.obj')
       this.mesh.transform = new MatrixTransform()
       this.quad = new Quad(this.gl)
 
       this.scene = new Scene(this.gl)
       this.scene.resize(this.canvas.width, this.canvas.height)
-      this.scene.addComponent(this.camera)
+      this.scene.addComponent(this.reflectedCamera)
       this.scene.addComponent(this.mesh)
       setInterval(this.timePass, 100)
 
@@ -116,8 +126,9 @@ export default {
         this.now += 0.2
         this.mesh.transform.matrix = mat4.create()
         var matrix = this.mesh.transform.matrix
-        mat4.rotate(matrix, matrix, this.now, [0, 1, 0])
-        // mat4.translate(matrix, matrix, [0, 0, 10])
+        if (this.rotating) {
+          mat4.rotate(matrix, matrix, this.now, [0, 1, 0])
+        }
         mat4.scale(matrix, matrix, [3, 3, 3])
         this.mesh.transform.rotation = vec3.fromValues(this.now, this.now, this.now)
       }
@@ -140,6 +151,13 @@ export default {
     },
     roll() {
       this.camera.roll(Number(this.rollDistance))
+    },
+    reflect() {
+      if (this.reflectedCamera.plane == null) {
+        this.reflectedCamera.changePlane([1, 0, 0, 10])
+      } else {
+        this.reflectedCamera.changePlane(null)
+      }
     }
   }
 }
