@@ -9,16 +9,22 @@ export default class {
   create() {
     if (!this.created) {
       this.created = true
-      this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true)
       this.gl.activeTexture(this.gl.TEXTURE0 + this.bound)
       this.id = this.gl.createTexture()
     }
+    return this
   }
 
   destroy() {
     if (this.created) {
       this.created = false
     }
+  }
+
+  setSize(width, height) {
+    this.width = width
+    this.height = height
+    return this
   }
 
   bind() {
@@ -28,6 +34,7 @@ export default class {
 
     this.gl.activeTexture(this.gl.TEXTURE0 + this.bound)
     this.gl.bindTexture(this.gl.TEXTURE_2D, this.id)
+    return this
   }
 
   getId() {
@@ -52,7 +59,13 @@ export default class {
     var image = new Image()
     var that = this
     this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, false)
-    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, new Uint8Array([255, 122, 255, 255]))
+    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1, 1, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE,
+      new Uint8Array([
+        255, 125, 255, 255,
+        255, 1, 255, 255,
+        255, 1, 255, 255,
+        255, 1, 255, 255
+      ]))
 
     image.onload = function() {
       that.bind()
@@ -63,6 +76,14 @@ export default class {
     }
     image.src = url
 
+    return this
+  }
+
+  build() {
+    this.bind()
+    this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.width, this.height, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null)
+    this.gl.texParameterf(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR)
+    this.gl.texParameterf(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.LINEAR)
     return this
   }
 }

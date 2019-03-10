@@ -18,7 +18,10 @@ export default class BasicCamera extends Camera {
   constructor() {
     super()
     this.transformType = BasicCamera.TransformType.LandObject
-    this.eventListener = null
+  }
+
+  addEventListener(e) {
+    this.eventListeners.push(e)
   }
 
   getProjectionMatrix() {
@@ -84,9 +87,7 @@ export default class BasicCamera extends Camera {
 
     this.viewMatrix = view
 
-    if (this.eventListener !== null && this.eventListener.onViewMatrixChanged) {
-      this.eventListener.onViewMatrixChanged()
-    }
+    this.notifyViewMatrixChanged()
   }
 
   perspective(fovy, near, far) {
@@ -100,9 +101,8 @@ export default class BasicCamera extends Camera {
   ortho(left, right, bottom, top, near, far) {
     this.projectionMatrix = mat4.create()
     mat4.ortho(this.projectionMatrix, left, right, bottom, top, near, far)
-    if (this.eventListener !== null && this.eventListener.onProjectionMatrixChanged) {
-      this.eventListener.onProjectionMatrixChanged()
-    }
+
+    this.notifyProjectionMatrixChanged()
   }
 
   setAspect(aspect) {
@@ -125,9 +125,7 @@ export default class BasicCamera extends Camera {
                   0,       0,   2.0 * f * n / (n - f),     0
     )
     this.projectionMatrix = projection
-    if (this.eventListener !== null && this.eventListener.onProjectionMatrixChanged) {
-      this.eventListener.onProjectionMatrixChanged()
-    }
+    this.notifyProjectionMatrixChanged()
   }
 
   walk(distance) {

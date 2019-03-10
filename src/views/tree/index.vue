@@ -73,8 +73,6 @@ export default {
 
   methods: {
     repaint: function() {
-      // 获取canvas元素
-      // 获取绘制二维上下文
       var gl = this.canvas.getContext('webgl2')
       this.gl = gl
       if (!gl) {
@@ -86,35 +84,28 @@ export default {
 
     initGl: async function() {
       this.camera = new BasicCamera()
-      this.camera.lookAt([80, 80, -80], [0, 30, 0], [0, 1, 0])
+      this.camera.lookAt([0, 30, -80], [0, 30, 0], [0, 1, 0])
       this.camera.perspective(3.14 / 2 / 2, 0.1, 10000)
       this.camera.ortho(-5, 5, -5, 5, 0.001, 100)
       this.camera.setAspect(2)
       this.camera.transformType = BasicCamera.TransformType.LandObject
       this.reflectedCamera = new PlaneReflectedCamera(this.camera)
 
-      this.cube = new Cube(this.gl)
+      this.cube = new Cube(this.gl) // else return fasle
       this.anchor = new Anchor(this.gl)
       this.anchor.transform.scale = vec3.fromValues(2, 2, 2)
 
       this.mesh = new ObjMesh(this.gl, '/static/models/tails/Tails.obj')
+      this.mesh2 = new ObjMesh(this.gl, '/static/models/tails/Tails.obj')
+      this.mesh2.transform.position = [0, 0, -40]
       this.mesh.transform = new MatrixTransform()
       this.quad = new Quad(this.gl)
 
-      this.scene = new Scene(this.gl)
-      this.scene.resize(this.canvas.width, this.canvas.height)
+      this.scene = new Scene(this.gl).setSize(this.canvas.width, this.canvas.height).setMirrorEnabled(true)
       this.scene.addComponent(this.reflectedCamera)
       this.scene.addComponent(this.mesh)
+      this.scene.addComponent(this.mesh2)
       setInterval(this.timePass, 100)
-
-      var m = mat4.create()
-      mat4.lookAt(m, [0, 0, 0], [0, 0, -1], [0, 1, 0])
-      // console.log(m)
-
-      mat4.perspective(m, 3.14 / 2 / 2, 1, 0.1, 100)
-      // console.log('persp: ' + m)
-      mat4.ortho(m, -1, 1, -1, 1, 0.1, 100)
-      // console.log('ortho: ' + m)
     },
 
     paintGl: function() {
@@ -154,7 +145,7 @@ export default {
     },
     reflect() {
       if (this.reflectedCamera.plane == null) {
-        this.reflectedCamera.changePlane([1, 0, 0, 10])
+        this.reflectedCamera.changePlane([0, 0, 1, -50])
       } else {
         this.reflectedCamera.changePlane(null)
       }

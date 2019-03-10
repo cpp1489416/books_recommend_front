@@ -27,6 +27,10 @@ export default class {
     }
   }
 
+  setCamera(camera) {
+    this.camera = camera;
+  }
+
   addThing(thing) {
     this.things.push(thing)
     this.onAddThing(thing)

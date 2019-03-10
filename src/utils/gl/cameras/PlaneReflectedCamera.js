@@ -9,7 +9,7 @@ export default class PlaneReflectedCamera extends Camera {
   constructor(parentCamera, plane) {
     super()
     this.parentCamera = parentCamera
-    this.parentCamera.eventListener = this
+    this.parentCamera.addEventListener(this)
     if (typeof (plane) === 'undefined') {
       plane = null
     }
@@ -19,10 +19,15 @@ export default class PlaneReflectedCamera extends Camera {
   changePlane(plane) {
     this.plane = plane
     this.onViewMatrixChanged()
+    return this
   }
 
   onViewMatrixChanged() {
     if (this.plane === null) {
+      this.xVector = this.parentCamera.xVector
+      this.yVector = this.parentCamera.yVector
+      this.zVector = this.parentCamera.zVector
+      this.position = this.parentCamera.position
       this.viewMatrix = this.parentCamera.viewMatrix
     } else {
       this.xVector = MatrixMath.reflectVector(vec3.create(), this.parentCamera.xVector, this.plane)
@@ -38,6 +43,11 @@ export default class PlaneReflectedCamera extends Camera {
       this.viewMatrix = this.parentCamera.viewMatrix
       this.updateViewMatrix()
     }
+    this.notifyViewMatrixChanged()
+  }
+
+  onProjectionMatrixChanged() {
+    this.notifyProjectionMatrixChanged()
   }
 
   updateViewMatrix() {
@@ -59,7 +69,9 @@ export default class PlaneReflectedCamera extends Camera {
   }
 
   getSkyboxViewMatrix() {
-    return this.parentCamera.getSkyboxViewMatrix()
+    var view = mat4.clone(this.getViewMatrix())
+    view[12] = view[13] = view[14] = 0
+    return view
   }
 
   getViewMatrix() {

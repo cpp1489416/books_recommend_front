@@ -42,17 +42,21 @@ export default class extends Thing {
     this.gl.enableVertexAttribArray(positionAttributeId)
     this.gl.vertexAttribPointer(positionAttributeId, 3, this.gl.FLOAT, this.gl.FALSE, 0, this.gl.NULL)
 
-    var textureCoordId = technique.getTextureCoordAttribute()
-    this.vboTextureCoords.bind()
-    this.gl.enableVertexAttribArray(textureCoordId)
-    this.gl.vertexAttribPointer(textureCoordId, 2, this.gl.FLOAT, this.gl.FALSE, 0, this.gl.NULL)
+    if (requirement.needTexture) {
+      var textureCoordId = technique.getTextureCoordAttribute()
+      this.vboTextureCoords.bind()
+      this.gl.enableVertexAttribArray(textureCoordId)
+      this.gl.vertexAttribPointer(textureCoordId, 2, this.gl.FLOAT, this.gl.FALSE, 0, this.gl.NULL)
+    }
 
     this.texture = new Texture(this.gl).fromImage(image_url)
   }
 
   onDraw() {
     this.vao.bind()
-    this.texture.bind()
+    if (typeof this.texture !== 'undefined') {
+      this.texture.bind()
+    }
     this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 import { vec3 } from 'gl-matrix'
 
 export default class {
@@ -31,6 +32,29 @@ export default class {
     var s2 = vec3.scale(vec3.create(), n, -2 * vec3.dot(i, n))
     vec3.add(out, i, s2)
 
+    return out
+  }
+
+  static pointPlaneToVectorPlane(out, vec1, vec2, vec3) {
+    //
+    // (y2*z3 - y2*z1 - y1*z3 - y3*z2 + y1*z2 + y3*z1)*X +
+    // (x3*z2 - x1*z2 - x3*z1 - x2*z3 + x2*z1 + x1*z3)*Y +
+    //  (x2*y3 - x2*y1 - x1*y3 - x3*y2 + x3*y1 + x1*y2)*Z +
+    // x1*y3*z2 + x2*y1*z3 + x3*y2*z1 - x1*y2*z3 - x3*y1*z2 - x2*y3*z1 = 0;
+
+    var x1 = vec1[0]
+    var y1 = vec1[1]
+    var z1 = vec1[2]
+    var x2 = vec2[0]
+    var y2 = vec2[1]
+    var z2 = vec2[2]
+    var x3 = vec3[0]
+    var y3 = vec3[1]
+    var z3 = vec3[2]
+    out[0] = y2 * z3 - y2 * z1 - y1 * z3 - y3 * z2 + y1 * z2 + y3 * z1
+    out[1] = x3 * z2 - x1 * z2 - x3 * z1 - x2 * z3 + x2 * z1 + x1 * z3
+    out[2] = x2 * y3 - x2 * y1 - x1 * y3 - x3 * y2 + x3 * y1 + x1 * y2
+    out[3] = x1 * y3 * z2 + x2 * y1 * z3 + x3 * y2 * z1 - x1 * y2 * z3 - x3 * y1 * z2 - x2 * y3 * z1
     return out
   }
 }

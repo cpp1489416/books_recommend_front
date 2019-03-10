@@ -6,6 +6,7 @@ export default class {
     this.created = false
     this.technique = null
     this.transform = new Transform()
+    this.visible = true
   }
 
   create() {
@@ -15,7 +16,14 @@ export default class {
     }
   }
 
+  setVisible(visible) {
+    this.visible = visible
+  }
+
   draw() {
+    if (!this.visible) {
+      return
+    }
     this.onDraw()
   }
 
