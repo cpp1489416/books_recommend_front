@@ -65,6 +65,11 @@ export default class extends Thing {
       for (var i in this.components) {
         var component = this.components[i]
         var pictureUrl = component.material.pictureUrl
+        component.diffuseColor = component.material.diffuseColor
+        if (pictureUrl === null) {
+          component.texture = null
+          continue
+        }
         var texture
         if (!texturesMap.has(pictureUrl)) {
           texture = new Texture(this.gl).fromImage(component.material.pictureUrl).setWrap(this.gl.REPEAT)
@@ -84,7 +89,13 @@ export default class extends Thing {
     this.vao.bind()
     for (var i in this.components) {
       var component = this.components[i]
-      component.texture.bind()
+      if (component.texture === null) {
+        this.gl.uniform1i(this.technique.getDiffuseMapEnabledUniform(), 0)
+        this.gl.uniform3fv(this.technique.getDiffuseColorUniform(), component.diffuseColor)
+      } else {
+        this.gl.uniform1i(this.technique.getDiffuseMapEnabledUniform(), 1)
+        component.texture.bind()
+      }
       this.gl.drawArrays(this.gl.TRIANGLES, component.startIndex, component.count)
     }
   }

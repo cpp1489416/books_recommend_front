@@ -95,7 +95,9 @@ export default {
       this.anchor = new Anchor(this.gl)
       this.anchor.transform.scale = vec3.fromValues(2, 2, 2)
 
-      this.mesh = new ObjMesh(this.gl, '/static/models/tails/Tails.obj')
+      this.mesh = new ObjMesh(this.gl, '/static/models/pancat/pancat.obj')
+      this.mesh.transform.position = [5, 0, 0]
+      this.mesh.transform.scale = [0.2, 0.2, 0.2]
       this.mesh2 = new ObjMesh(this.gl, '/static/models/tails/Tails.obj')
       this.mesh2.transform.position = [0, 0, -40]
       this.mesh.transform = new MatrixTransform()

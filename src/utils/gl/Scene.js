@@ -22,6 +22,7 @@ export default class {
     this.mirrorEnabled = false
     this.quad = new Quad(this.gl)
     this.quad.transform.position = [-0, 1, 50]
+    this.quad.transform.rotation = [0, 0, 0]
     this.quad.transform.scale = [-50, 35, 0]
     this.rttTechnique.addThing(this.quad)
     this.initGl()
@@ -36,7 +37,7 @@ export default class {
       this.setMirrorEnabled(this.mirrorEnabled)
       if (this.mirrorEnabled) {
         console.log(this.camera)
-        this.mirrorCamera = new PlaneReflectedCamera(this.camera).changePlane([0, 0, 1, -50])
+        this.mirrorCamera = new PlaneReflectedCamera(this.camera).changePlane([0, 0, -1, 50])
         this.rttTechnique.setRttCamera(this.mirrorCamera)
       }
     } else if (component instanceof ObjMesh) {

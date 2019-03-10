@@ -18,6 +18,8 @@ export default class extends Technique {
   getModelMatrixUniform() { return this.getUniformLocation('modelMatrix') }
   getTextureCoordAttribute() { return this.getAttributeLocation('textureCoord') }
   getSamplerUniform() { return this.getUniformLocation('pictures') }
+  getDiffuseColorUniform() { return this.getUniformLocation('diffuseColor') }
+  getDiffuseMapEnabledUniform() { return this.getUniformLocation('diffuseMapEnabled') }
 
   getThingRequirement() {
     return {
