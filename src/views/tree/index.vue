@@ -141,10 +141,8 @@ export default {
 
     timePass: function() {
       if (this.mesh !== null && this.rotating) {
-        this.now += 0.2
-        var lastRotation = this.mesh.transform.getRotation()
-        console.log(lastRotation)
-        this.mesh.transform.setRotation([lastRotation[0], lastRotation[1] + this.now, lastRotation[2]])
+        this.now += 5
+        this.mesh.transform.setRotation(quat.fromEuler(quat.create(), 0, this.now, 0))
       }
       this.paintGl()
     },
