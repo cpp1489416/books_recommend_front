@@ -7,7 +7,7 @@ import axios from 'axios'
 import TextureArray from '../common/TextureArray'
 import Texture from '../common/Texture'
 import MatrixMath from '../tools/MatrixMath'
-import { vec4 } from 'gl-matrix'
+import { vec4, vec3 } from 'gl-matrix'
 import PlaneReflectedCamera from '../cameras/PlaneReflectedCamera'
 
 export default class ObjMeshMirror extends Thing {
@@ -42,7 +42,11 @@ export default class ObjMeshMirror extends Thing {
       // alert('not updated')
       return this
     }
-    this.plane = MatrixMath.transformPlane(vec4.create(), this.originPlane, this.transform.getMatrix())
+    var v1 = vec3.transformMat4(vec3.create(), this.point1, this.transform.getMatrix())
+    var v2 = vec3.transformMat4(vec3.create(), this.point2, this.transform.getMatrix())
+    var v3 = vec3.transformMat4(vec3.create(), this.point3, this.transform.getMatrix())
+    this.plane = MatrixMath.pointPlaneToVectorPlane(vec4.create(), v1, v2, v3)
+    // MatrixMath.transformPlane(vec4.create(), this.originPlane, this.transform.clone().getMatrix())
     this.reflectedCamera.changePlane(this.plane)
     return this
   }
@@ -85,8 +89,15 @@ export default class ObjMeshMirror extends Thing {
     var v1 = [positions[0], positions[1], positions[2]]
     var v2 = [positions[3], positions[4], positions[5]]
     var v3 = [positions[6], positions[7], positions[8]]
+    this.point1 = v1
+    this.point2 = v2
+    this.point3 = v3
+    // alert(v1)
+    // alert(v2)
+    // alert(v3)
     this.originPlane = MatrixMath.pointPlaneToVectorPlane(vec4.create(), v1, v2, v3)
-    this.originPlane = [0, 0, 1, 0]
+    // alert('generated plane: ' + this.originPlane)
+    // this.originPlane = vec4.fromValues(0, 0, -1, 0)
   }
 
   onDraw() {

@@ -102,15 +102,15 @@ export default {
       this.reflectedCamera = new PlaneReflectedCamera(this.camera)
 
       this.cube = new Cube(this.gl) // else return fasle
-      this.mirror = new ObjMeshMirror(this.gl, '/static/models/mirror/mirror.obj')
-      this.mirror.transform.setPosition([21, 10, 20])
-      this.mirror.transform.setRotation(quat.fromEuler(quat.create(), -20, 5, 5))
-      this.mirror.transform.setScaling([2, 0.4, 1])
+      this.mirror = new ObjMeshMirror(this.gl, '/static/models/mirror2/mirror.obj')
+      this.mirror.transform.setPosition([21.0, 10.0, 20.0])
+      this.mirror.transform.setScaling([20, 4, 1])
+      this.mirror.transform.setRotation(quat.fromEuler(quat.create(), -20.0, 5.0, 5.0))
 
       this.mirror2 = new ObjMeshMirror(this.gl, '/static/models/mirror/mirror.obj')
-      this.mirror2.transform.setPosition([-40, 0, 0])
-      this.mirror2.transform.setRotation(quat.fromEuler(quat.create(), 0, 90, 0))
       this.mirror2.transform.setScaling([2, 2, 1])
+      this.mirror2.transform.setPosition([-40, 0, 0])
+      this.mirror2.transform.setRotation(quat.fromEuler(quat.create(), 0, 100, 0))
 
       this.mesh = new ObjMesh(this.gl, '/static/models/tails/Tails.obj')
       this.mesh.transform.setPosition([20, 0, 0])

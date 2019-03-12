@@ -1,7 +1,7 @@
 import { mat4, quat, vec3 } from 'gl-matrix'
 import MatrixMath from '../tools/MatrixMath'
 
-export default class {
+export default class Transform {
   constructor() {
     this.matrix = mat4.create()
     this.eventListeners = []
@@ -79,5 +79,11 @@ export default class {
 
   getMatrix() {
     return this.matrix
+  }
+
+  clone() {
+    var a = new Transform()
+    a.matrix = this.matrix
+    return a
   }
 }

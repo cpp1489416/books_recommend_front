@@ -15,6 +15,6 @@ void main()
     positionInRtt /= positionInRtt.w;
     positionInRtt = (positionInRtt + 1.0) * 0.5; // move to 0-1 cooreds
     vec4 color = texture2D(diffusePicture, positionInRtt.st);
-    color.xyz /= 2.0;
+    color.xyz /= 4.0;
     gl_FragColor = color;
 }

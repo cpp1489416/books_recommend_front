@@ -147,62 +147,42 @@ export default class BasicCamera extends Camera {
     this.updateViewMatrix()
   }
 
-  vec3ToVec4() {
-    this.xVector = vec4.fromValues(this.xVector[0], this.xVector[1], this.xVector[2], 1)
-    this.yVector = vec4.fromValues(this.yVector[0], this.yVector[1], this.yVector[2], 1)
-    this.zVector = vec4.fromValues(this.zVector[0], this.zVector[1], this.zVector[2], 1)
-    this.position = vec4.fromValues(this.position[0], this.position[1], this.position[2], 1)
-  }
-
-  vec4ToVec3() {
-    this.xVector = vec3.fromValues(this.xVector[0], this.xVector[1], this.xVector[2])
-    this.yVector = vec3.fromValues(this.yVector[0], this.yVector[1], this.yVector[2])
-    this.zVector = vec3.fromValues(this.zVector[0], this.zVector[1], this.zVector[2])
-    this.position = vec3.fromValues(this.position[0], this.position[1], this.position[2])
-  }
-
   pitch(distance) {
-    this.vec3ToVec4()
     var rm = mat4.create()
     if (this.transformType === BasicCamera.Local) {
       mat4.rotate(rm, rm, distance, this.xVector)
-      vec4.transformMat4(this.position, this.position, rm)
+      vec3.transformMat4(this.position, this.position, rm)
     } else {
       mat4.rotate(rm, rm, distance, this.xVector)
     }
-    vec4.transformMat4(this.yVector, this.yVector, rm)
-    vec4.transformMat4(this.zVector, this.zVector, rm)
-    this.vec4ToVec3()
+    vec3.transformMat4(this.yVector, this.yVector, rm)
+    vec3.transformMat4(this.zVector, this.zVector, rm)
     this.updateViewMatrix()
   }
 
   yall(distance) {
-    this.vec3ToVec4()
     var rm = mat4.create()
     if (this.transformType === BasicCamera.Local) {
       mat4.rotate(rm, rm, distance, this.yVector)
-      vec4.transformMat4(this.position, this.position, rm)
+      vec3.transformMat4(this.position, this.position, rm)
     } else {
       mat4.rotate(rm, rm, distance, this.yVector)
     }
-    vec4.transformMat4(this.xVector, this.xVector, rm)
-    vec4.transformMat4(this.zVector, this.zVector, rm)
-    this.vec4ToVec3()
+    vec3.transformMat4(this.xVector, this.xVector, rm)
+    vec3.transformMat4(this.zVector, this.zVector, rm)
     this.updateViewMatrix()
   }
 
   roll(distance) {
-    this.vec3ToVec4()
     var rm = mat4.create()
     if (this.transformType === BasicCamera.Local) {
       mat4.rotate(rm, rm, distance, this.zVector)
-      vec4.transformMat4(this.position, this.position, rm)
+      vec3.transformMat4(this.position, this.position, rm)
     } else {
       mat4.rotate(rm, rm, distance, this.zVector)
     }
-    vec4.transformMat4(this.xVector, this.xVector, rm)
-    vec4.transformMat4(this.yVector, this.yVector, rm)
-    this.vec4ToVec3()
+    vec3.transformMat4(this.xVector, this.xVector, rm)
+    vec3.transformMat4(this.yVector, this.yVector, rm)
     this.updateViewMatrix()
   }
 }

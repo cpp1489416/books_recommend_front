@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
-import { vec3, vec4, mat4 } from 'gl-matrix'
+import { vec3, vec4, mat4, quat } from 'gl-matrix'
 
-export default class {
+export default class MatrixMath {
   static reflectMatrix(m, plane) {
     m[0] = 1 - 2 * plane[0] * plane[0]
     m[4] = -2 * plane[1] * plane[0]
@@ -35,6 +35,15 @@ export default class {
     return out
   }
 
+  static normalizePlane(out, plane) {
+    var len = 1.0 / Math.sqrt(plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2])
+    out[0] = plane[0] * len
+    out[1] = plane[1] * len
+    out[2] = plane[2] * len
+    out[3] = plane[3] * len
+    return out
+  }
+
   static pointPlaneToVectorPlane(out, vec1, vec2, vec3) {
     //
     // (y2*z3 - y2*z1 - y1*z3 - y3*z2 + y1*z2 + y3*z1)*X +
@@ -55,12 +64,12 @@ export default class {
     out[1] = x3 * z2 - x1 * z2 - x3 * z1 - x2 * z3 + x2 * z1 + x1 * z3
     out[2] = x2 * y3 - x2 * y1 - x1 * y3 - x3 * y2 + x3 * y1 + x1 * y2
     out[3] = x1 * y3 * z2 + x2 * y1 * z3 + x3 * y2 * z1 - x1 * y2 * z3 - x3 * y1 * z2 - x2 * y3 * z1
-    return out
+    return MatrixMath.normalizePlane(out, out)
   }
 
   static transformPlane(out, plane, m) {
-    var m1 = mat4.transpose(mat4.create, m)
-    m1 = mat4.invert(m1, m1)
+    var m1 = mat4.invert(mat4.create, m)
+    m1 = mat4.transpose(m1, m1)
     vec4.transformMat4(out, plane, m1)
     return out
   }

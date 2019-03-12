@@ -11,7 +11,7 @@ export default class PlaneReflectedCamera extends Camera {
     this.parentCamera = parentCamera
     this.parentCamera.addEventListener(this)
     if (typeof (plane) === 'undefined') {
-      plane = vec4.create()// [0, 0, 0, 0]
+      plane = null
     }
     this.changePlane(plane)
   }
@@ -38,11 +38,7 @@ export default class PlaneReflectedCamera extends Camera {
       this.yVector = MatrixMath.reflectVector(vec3.create(), this.parentCamera.yVector, this.plane)
       this.zVector = MatrixMath.reflectVector(vec3.create(), this.parentCamera.zVector, this.plane)
       var reflectMatrix = MatrixMath.reflectMatrix(mat4.create(), this.plane)
-      this.position = vec4.transformMat4(
-        vec4.create(),
-        vec4.fromValues(this.parentCamera.position[0], this.parentCamera.position[1], this.parentCamera.position[2], 1),
-        reflectMatrix)
-      this.viewMatrix = this.parentCamera.viewMatrix
+      this.position = vec3.transformMat4(vec3.create(), this.parentCamera.position, reflectMatrix)
       this.updateViewMatrix()
     }
     this.notifyViewMatrixChanged()

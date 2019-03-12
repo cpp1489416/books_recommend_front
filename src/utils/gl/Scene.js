@@ -99,6 +99,9 @@ export default class {
       this.textureTechnique.setClipPlane0Enabled(true)
       for (var i in this.rttTechnique.getThings()) {
         var thing = this.rttTechnique.getThings()[i]
+        if (!thing.fileLoaded) {
+          continue
+        }
         // console.log(thing)
         // console.log(thing)
         thing.rtt.bindFramebuffer()
