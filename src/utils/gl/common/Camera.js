@@ -5,7 +5,20 @@ export default class Camera {
   }
 
   addEventListener(e) {
+    if (this.containsEventListener(e)) {
+      return this
+    }
     this.eventListeners.push(e)
+    return this
+  }
+
+  containsEventListener(lis) {
+    for (var i in this.eventListeners) {
+      if (this.eventListeners[i] === lis) {
+        return true
+      }
+    }
+    return false
   }
 
   notifyProjectionMatrixChanged() {

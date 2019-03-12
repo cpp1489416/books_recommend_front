@@ -10,7 +10,8 @@ varying vec3 positionVarying;
 
 void main()
 {
- 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1);
- 	positionVarying = position;
+  vec4 modelPosition = modelMatrix * vec4(position, 1);
+ 	gl_Position = projectionMatrix * viewMatrix * modelPosition;
+ 	positionVarying = modelPosition.xyz / modelPosition.w;
   textureCoordVarying = textureCoord;
 }

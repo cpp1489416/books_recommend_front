@@ -7,7 +7,7 @@ import axios from 'axios'
 import TextureArray from '../common/TextureArray'
 import Texture from '../common/Texture'
 
-export default class extends Thing {
+export default class ObjMesh extends Thing {
   constructor(gl, url) {
     super(gl)
     this.url = url
@@ -15,7 +15,6 @@ export default class extends Thing {
   }
 
   onCreateVbo() {
-
   }
 
   async onCreateVao(technique, requirement) {
@@ -42,6 +41,7 @@ export default class extends Thing {
     this.gl.enableVertexAttribArray(positionAttributeId)
     this.gl.vertexAttribPointer(positionAttributeId, 3, this.gl.FLOAT, this.gl.FALSE, 0, this.gl.NULL)
 
+    /* obsolete, no need colors
     if (requirement.needColor) {
       this.vboColors = new Buffer(this.gl, this.gl.ARRAY_BUFFER, this.gl.STATIC_DRAW)
       this.vboColors.bind()
@@ -51,6 +51,7 @@ export default class extends Thing {
       this.gl.enableVertexAttribArray(colorAttributeId)
       this.gl.vertexAttribPointer(colorAttributeId, 3, this.gl.FLOAT, this.gl.FALSE, 0, this.gl.NULL)
     }
+    */
 
     if (requirement.needTexture) {
       this.vboTextureCoords = new Buffer(this.gl, this.gl.ARRAY_BUFFER, this.gl.STATIC_DRAW)
@@ -99,4 +100,5 @@ export default class extends Thing {
       this.gl.drawArrays(this.gl.TRIANGLES, component.startIndex, component.count)
     }
   }
+
 }

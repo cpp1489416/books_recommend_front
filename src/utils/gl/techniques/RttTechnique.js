@@ -29,17 +29,10 @@ export default class RttTechnique extends Technique {
     }
   }
 
-  drawThings() {
-    if (typeof this.rttCamera === 'undefined' || this.rttCamera === null) {
-      return
-    }
-    this.setRttProjectionMatrix(this.rttCamera.getProjectionMatrix())
-    this.setRttViewMatrix(this.rttCamera.getViewMatrix())
-    super.drawThings()
-  }
-
   setRttCamera(rttCamera) {
     this.rttCamera = rttCamera
+    this.setRttProjectionMatrix(this.rttCamera.getProjectionMatrix())
+    this.setRttViewMatrix(this.rttCamera.getViewMatrix())
   }
 
   setRttProjectionMatrix(projectionMatrix) {

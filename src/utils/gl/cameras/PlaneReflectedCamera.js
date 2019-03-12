@@ -11,7 +11,7 @@ export default class PlaneReflectedCamera extends Camera {
     this.parentCamera = parentCamera
     this.parentCamera.addEventListener(this)
     if (typeof (plane) === 'undefined') {
-      plane = null
+      plane = vec4.create()// [0, 0, 0, 0]
     }
     this.changePlane(plane)
   }
@@ -20,6 +20,10 @@ export default class PlaneReflectedCamera extends Camera {
     this.plane = plane
     this.onViewMatrixChanged()
     return this
+  }
+
+  getPlane(plane) {
+    return this.plane
   }
 
   onViewMatrixChanged() {
@@ -38,8 +42,6 @@ export default class PlaneReflectedCamera extends Camera {
         vec4.create(),
         vec4.fromValues(this.parentCamera.position[0], this.parentCamera.position[1], this.parentCamera.position[2], 1),
         reflectMatrix)
-      console.log(this)
-      console.log(this.parentCamera)
       this.viewMatrix = this.parentCamera.viewMatrix
       this.updateViewMatrix()
     }
@@ -66,6 +68,13 @@ export default class PlaneReflectedCamera extends Camera {
     )
 
     this.viewMatrix = view
+    this.correctPlaneNormalDirection()
+  }
+
+  correctPlaneNormalDirection() {
+    if (vec4.dot(vec4.fromValues(this.position[0], this.position[1], this.position[2], 1), this.plane) > 0) {
+      MatrixMath.changePlaneNormalDirection(this.plane, this.plane)
+    }
   }
 
   getSkyboxViewMatrix() {

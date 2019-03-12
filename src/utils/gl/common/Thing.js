@@ -6,6 +6,7 @@ export default class {
     this.created = false
     this.technique = null
     this.transform = new Transform()
+    this.transform.addEventListener(this)
     this.visible = true
   }
 

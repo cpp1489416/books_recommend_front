@@ -10,6 +10,7 @@ export default class extends Technique {
     this.fragmentShader = new Shader(this.gl, this.gl.FRAGMENT_SHADER).compile(ps_code)
     this.program = new Program(this.gl)
     this.program.addShader(this.vertexShader).addShader(this.fragmentShader).link()
+    this.setClipPlane0Enabled(false)
   }
 
   getPositionAttribute() { return this.getAttributeLocation('position') }
@@ -20,6 +21,18 @@ export default class extends Technique {
   getSamplerUniform() { return this.getUniformLocation('pictures') }
   getDiffuseColorUniform() { return this.getUniformLocation('diffuseColor') }
   getDiffuseMapEnabledUniform() { return this.getUniformLocation('diffuseMapEnabled') }
+  getClipPlane0EnabledUniform() { return this.getUniformLocation('clipPlane0Enabled') }
+  getClipPlane0Uniform() { return this.getUniformLocation('clipPlane0') }
+
+  setClipPlane0Enabled(enabled) {
+    this.getProgram().bind()
+    this.gl.uniform1i(this.getClipPlane0EnabledUniform(), enabled ? 1 : 0)
+  }
+
+  setClipPlane0(plane) {
+    this.getProgram().bind()
+    this.gl.uniform4fv(this.getClipPlane0Uniform(), plane)
+  }
 
   getThingRequirement() {
     return {

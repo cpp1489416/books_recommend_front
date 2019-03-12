@@ -4,27 +4,24 @@ import TextureTechnique from './techniques/TextureTechnique'
 import JustColorSubTechnique from './techniques/JustColorSubTechnique'
 import ObjMesh from './things/ObjMesh'
 import Anchor from './things/Anchor'
-import { vec3, mat4 } from 'gl-matrix'
-import MatrixTransform from './transforms/MatrixTransform'
+import { vec3, mat4, quat } from 'gl-matrix'
 import Quad from './things/Quad'
 import BasicCamera from './cameras/BasicCamera'
 import FramebufferTexture from './common/FramebufferTexture'
 import RttTechnique from './techniques/RttTechnique'
 import PlaneReflectedCamera from './cameras/PlaneReflectedCamera'
+import ObjMeshMirror from './things/ObjMeshMirror'
 
 export default class {
   constructor(gl) {
     this.gl = gl
     this.skyboxTechnique = new SkyboxTechnique(gl)
     this.textureTechnique = new TextureTechnique(gl)
+    this.basicTechnique = new JustColorSubTechnique(gl)
     this.supportTechnique = new JustColorSubTechnique(gl)
     this.rttTechnique = new RttTechnique(gl)
     this.mirrorEnabled = false
-    this.quad = new Quad(this.gl)
-    this.quad.transform.position = [-0, 1, 50]
-    this.quad.transform.rotation = [0, 0, 0]
-    this.quad.transform.scale = [-50, 35, 0]
-    this.rttTechnique.addThing(this.quad)
+    this.mirrorInited = false
     this.initGl()
   }
 
@@ -34,16 +31,29 @@ export default class {
       this.skyboxTechnique.addComponent(component)
       this.textureTechnique.addComponent(component)
       this.rttTechnique.addComponent(component)
+      this.basicTechnique.addComponent(component)
+      this.mirrorInited = false
       this.setMirrorEnabled(this.mirrorEnabled)
-      if (this.mirrorEnabled) {
-        console.log(this.camera)
-        this.mirrorCamera = new PlaneReflectedCamera(this.camera).changePlane([0, 0, -1, 50])
-        this.rttTechnique.setRttCamera(this.mirrorCamera)
-      }
     } else if (component instanceof ObjMesh) {
       this.textureTechnique.addComponent(component)
+    } else if (component instanceof ObjMeshMirror) {
+      this.mirrorInited = false
+      this.rttTechnique.addThing(component)
+    } else {
+      this.basicTechnique.addComponent(component)
     }
     return this
+  }
+
+  initMirror() {
+    for (var i in this.rttTechnique.getThings()) {
+      var thing = this.rttTechnique.getThings()[i]
+      thing.setCamera(this.camera)
+      thing.rtt = new FramebufferTexture(this.gl).setSize(this.width, this.height).build()
+      thing.setTexture(thing.rtt.getTexture())
+    }
+
+    this.mirrorInited = true
   }
 
   setSize(width, height) {
@@ -55,11 +65,6 @@ export default class {
 
   setMirrorEnabled(enabled) {
     this.mirrorEnabled = enabled
-    if (enabled) {
-      this.rtt = new FramebufferTexture(this.gl).setSize(this.width, this.height).build()
-      this.quad.texture = this.rtt.getTexture()
-      this.rtt.bindFramebuffer()
-    }
     return this
   }
 
@@ -68,6 +73,7 @@ export default class {
     this.gl.clear(this.gl.DEPTH_BUFFER_BIT)
     this.skyboxTechnique.drawThings()
     this.textureTechnique.drawThings()
+    this.basicTechnique.drawThings()
   }
 
   drawSupports() {
@@ -77,28 +83,44 @@ export default class {
   }
 
   draw() {
+    if (this.camera == null) {
+      return
+    }
+
     this.anchor.transform.matrix = mat4.create()
     mat4.mul(this.anchor.transform.matrix, this.anchor.transform.matrix, this.camera.getSkyboxViewMatrix())
     mat4.translate(this.anchor.transform.matrix, this.anchor.transform.matrix, [-0.5, -0.5, -0.5])
     mat4.scale(this.anchor.transform.matrix, this.anchor.transform.matrix, [4, 4, 4])
 
     if (this.mirrorEnabled) {
-      this.rtt.bindFramebuffer()
-      this.skyboxTechnique.setCamera(this.mirrorCamera)
-      this.textureTechnique.setCamera(this.mirrorCamera)
-      this.drawInFramebuffer()
-      this.rtt.unbindFramebuffer()
+      if (!this.mirrorInited) {
+        this.initMirror()
+      }
+      this.textureTechnique.setClipPlane0Enabled(true)
+      for (var i in this.rttTechnique.getThings()) {
+        var thing = this.rttTechnique.getThings()[i]
+        // console.log(thing)
+        // console.log(thing)
+        thing.rtt.bindFramebuffer()
+        this.skyboxTechnique.setCamera(thing.getMirrorCamera())
+        this.textureTechnique.setCamera(thing.getMirrorCamera())
+        // alert(typeof thing.getMirrorCamera())
+        this.textureTechnique.setClipPlane0(thing.getMirrorCamera().getPlane())
+        this.drawInFramebuffer()
+        thing.rtt.unbindFramebuffer()
+        // break
+      }
+
       this.skyboxTechnique.setCamera(this.camera)
       this.textureTechnique.setCamera(this.camera)
-    }
-
-    this.drawInFramebuffer()
-
-    if (this.mirrorEnabled) {
+      this.textureTechnique.setClipPlane0Enabled(false)
+      this.drawInFramebuffer()
       this.rttTechnique.drawThings()
+      this.drawSupports()
+    } else {
+      this.drawInFramebuffer()
+      this.drawSupports()
     }
-
-    this.drawSupports()
   }
 
   initGl() {
@@ -107,7 +129,6 @@ export default class {
     this.gl.depthFunc(this.gl.LESS)
 
     this.anchor = new Anchor(this.gl)
-    this.anchor.transform = new MatrixTransform()
     this.supportTechnique.camera = new BasicCamera()
     this.supportTechnique.camera.ortho(-5, 5, -5, 5, 0.001, 100)
     this.supportTechnique.camera.lookAway([0, 0, -4])

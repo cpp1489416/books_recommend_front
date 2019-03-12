@@ -59,4 +59,10 @@ export default class extends Thing {
     }
     this.gl.drawArrays(this.gl.TRIANGLES, 0, 6)
   }
+
+  setCamera() {}
+
+  setTexture(texture  ) {
+    this.texture = texture
+  }
 }

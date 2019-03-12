@@ -27,6 +27,19 @@ export default class {
     }
   }
 
+  containsThing(thing) {
+    for (var i in this.things) {
+      if (this.things[i] === thing) {
+        return true
+      }
+    }
+    return false
+  }
+
+  getThings() {
+    return this.things
+  }
+
   setCamera(camera) {
     this.camera = camera;
   }

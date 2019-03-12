@@ -1,8 +1,8 @@
 import Technique from '../common/Technique'
 import Shader from '../common/Shader'
 import Program from '../common/Program'
-import vs_code from '@/assets/shaders/BasicVS.glsl'
-import ps_code from '@/assets/shaders/BasicPS.glsl'
+import vs_code from '@/assets/shaders/basic_vertex_shader.glsl'
+import ps_code from '@/assets/shaders/basic_fragment_shader.glsl'
 
 export default class extends Technique {
   onCreate() {
