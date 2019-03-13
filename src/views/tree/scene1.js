@@ -1,7 +1,13 @@
 
 export default {
   environment: {
-    mirrorEnabled: true
+    mirrorEnabled: true,
+    directionLight: {
+      enabled: true,
+      direction: [0, 0, 1],
+      color: [1, 1, 1],
+      intensity: 1.0
+    }
   },
   camera: {
     projectionType: 'perspective',
@@ -53,20 +59,30 @@ export default {
       }
     },
     {
-      name: 'pancat',
+      name: 'pancateee',
       type: 'obj_mesh',
-      url: '/static/models/pancat/pancat.obj',
+      url: '/static/models/stair/stair.obj',
       transform: {
-        position: [40, 0, 0]
+        position: [10, 0, 40],
+        rotation: [0, 45, 45]
       }
     },
     {
       name: 'pancat',
       type: 'obj_mesh',
-      url: '/static/models/stair/stair.obj',
+      url: '/static/models/pancat/pancat.obj',
       transform: {
         position: [40, 0, 0],
-        rotation: [-90, 0, 90]
+        rotation: [0, 45, 45]
+      }
+    },
+    {
+      name: 'pancat',
+      type: 'obj_mesh',
+      url: '/static/models/2plane/2plane.obj',
+      transform: {
+        //    position: [40, 0, 0],
+        // rotation: [-90, 0, 90]
       }
     }
   ]

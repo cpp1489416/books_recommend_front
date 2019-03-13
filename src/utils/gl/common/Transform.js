@@ -88,6 +88,12 @@ export default class Transform {
     return this.matrix
   }
 
+  getNormalMatrix() {
+    var m = mat4.invert(mat4.create(), this.matrix)
+    mat4.transpose(m, m)
+    return m
+  }
+
   clone() {
     var a = new Transform()
     a.matrix = this.matrix

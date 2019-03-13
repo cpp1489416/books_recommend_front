@@ -5,7 +5,7 @@ import Transform from './common/Transform'
 import ObjMeshMirror from './things/ObjMeshMirror'
 import Anchor from './things/Anchor'
 import PlaneReflectedCamera from './cameras/PlaneReflectedCamera'
-import { quat } from 'gl-matrix'
+import { quat, vec3 } from 'gl-matrix'
 
 export default class SceneBuilder {
   setGl(gl) {
@@ -133,12 +133,24 @@ export default class SceneBuilder {
     if (typeof config.mirrorEnabled === 'undefined') {
       this.config.mirrorEnabled = false
     }
+
+    if (typeof config.directionLight === 'undefined') {
+      config.directionLight = null
+    } else {
+      if (typeof config.directionLight.color === 'undefined') {
+        config.directionLight.color = vec3.fromValues(1, 1, 1)
+      }
+      if (typeof config.directionLight.intensity === 'undefined') {
+        config.directionLight.intensity = 1.0
+      }
+    }
     return config
   }
 
   buildScene() {
     var scene = new Scene(this.gl)
       .setSize(this.size.width, this.size.height)
+      .setDirectionLight(this.environment.directionLight)
       .setMirrorEnabled(this.environment.mirrorEnabled)
 
     for (var [name, model] of this.modelsMap.entries()) {

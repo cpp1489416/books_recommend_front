@@ -53,6 +53,16 @@ export default class ObjMesh extends Thing {
     }
     */
 
+    if (requirement.needNormal) {
+      this.vboNormals = new Buffer(this.gl, this.gl.ARRAY_BUFFER, this.gl.STATIC_DRAW)
+      this.vboNormals.bind()
+      this.vboNormals.setData(await scanner.getNormals())
+      var normalAttributeId = technique.getNormalAttribute()
+      this.vboNormals.bind()
+      this.gl.enableVertexAttribArray(normalAttributeId)
+      this.gl.vertexAttribPointer(normalAttributeId, 3, this.gl.FLOAT, this.gl.FALSE, 0, this.gl.NULL)
+    }
+
     if (requirement.needTexture) {
       this.vboTextureCoords = new Buffer(this.gl, this.gl.ARRAY_BUFFER, this.gl.STATIC_DRAW)
       this.vboTextureCoords.bind()
@@ -66,7 +76,6 @@ export default class ObjMesh extends Thing {
       for (var i in this.components) {
         var component = this.components[i]
         var pictureUrl = component.material.pictureUrl
-        component.diffuseColor = component.material.diffuseColor
         if (typeof pictureUrl === 'undefined') {
           component.texture = null
           continue
@@ -90,13 +99,13 @@ export default class ObjMesh extends Thing {
     this.vao.bind()
     for (var i in this.components) {
       var component = this.components[i]
-      if (component.texture === null) {
-        this.gl.uniform1i(this.technique.getDiffuseMapEnabledUniform(), 0)
-        this.gl.uniform3fv(this.technique.getDiffuseColorUniform(), component.diffuseColor)
-      } else {
-        this.gl.uniform1i(this.technique.getDiffuseMapEnabledUniform(), 1)
+      if (component.texture !== null) {
         component.texture.bind()
       }
+      this.technique.setMaterial({
+        diffuseColor: component.diffuseColor,
+        diffuseMapEnabled: component.texture !== null,
+      })
       this.gl.drawArrays(this.gl.TRIANGLES, component.startIndex, component.count)
     }
   }
