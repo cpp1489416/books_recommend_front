@@ -36,6 +36,7 @@ export default {
       name: 'mirror2',
       type: 'obj_mesh_mirror',
       url: '/static/models/mirror2/mirror.obj',
+      visible: false,
       transform: {
         position: [21.0, 10.0, 20.0],
         scaling: [20, 4, 1],
@@ -49,6 +50,15 @@ export default {
         scaling: [50, 50, 50],
         scaling_back: [50, 50, 50]
       }
+    },
+    {
+      name: 'pancat',
+      type: 'obj_mesh',
+      url: '/static/models/pancat/pancat.obj',
+      transform: {
+        position: [40, 0, 0]
+      }
+
     }
   ]
 }

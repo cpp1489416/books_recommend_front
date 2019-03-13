@@ -67,7 +67,7 @@ export default class ObjMesh extends Thing {
         var component = this.components[i]
         var pictureUrl = component.material.pictureUrl
         component.diffuseColor = component.material.diffuseColor
-        if (pictureUrl === null) {
+        if (typeof pictureUrl === 'undefined') {
           component.texture = null
           continue
         }

@@ -87,7 +87,6 @@ export default class ObjMeshScanner {
       var word = scanner.nextExpectCommont()
       if (word === 'newmtl') {
         this.matrialsMap[scanner.nextExpectCommont()] = curInfo = {}
-        curInfo.pictureUrl = null
       } else if (word === 'map_Kd') {
         curInfo.pictureUrl = this.addToPath(this.url, scanner.nextExpectCommont())
         scanner.jumpToNextLine()

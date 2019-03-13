@@ -98,9 +98,11 @@ export default class SceneBuilder {
       }
       model.configedName = modelConfig.name
       this.setConfigTransform(modelConfig.transform, model.transform)
-      // model.transform.updateFromTransform(this.buildTransform(modelConfig.transform))
       if (modelsMap.has(modelConfig.name)) {
         modelConfig.name += '_different '
+      }
+      if (modelConfig.visible === false) {
+        model.setVisible(false)
       }
       modelsMap.set(modelConfig.name, model)
     })
@@ -108,6 +110,9 @@ export default class SceneBuilder {
   }
 
   setConfigTransform(config, transform) {
+    if (typeof config === 'undefined') {
+      return transform
+    }
     if (typeof config.position !== 'undefined') {
       transform.setPosition(config.position)
     }
@@ -132,8 +137,9 @@ export default class SceneBuilder {
       .setSize(this.size.width, this.size.height)
       .setMirrorEnabled(this.environment.mirrorEnabled)
 
-    for (var [key, value] of this.modelsMap.entries()) {
-      scene.addComponent(value)
+    for (var [name, model] of this.modelsMap.entries()) {
+      model.name = name
+      scene.addComponent(model)
     }
     scene.addComponent(this.camera)
 
