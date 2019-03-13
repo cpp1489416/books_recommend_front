@@ -45,14 +45,11 @@ import PlaneReflectedCamera from '../../utils/gl/cameras/PlaneReflectedCamera'
 import BasicCamera from '../../utils/gl/cameras/BasicCamera'
 import { quat } from 'gl-matrix'
 import ObjMeshMirror from '../../utils/gl/things/ObjMeshMirror'
-import scene1 from './scene1'
-import SceneBuilder from '../../utils/gl/SceneBuilder'
 
 export default {
   data() {
     return {
       canvas: null,
-      sceneBuilder: null,
       scene: null,
       camera: null,
       reflectedCamera: null,
@@ -74,6 +71,10 @@ export default {
       rotateW: 0
     }
   },
+  watch: {
+    filterText(val) {
+    }
+  },
   mounted() {
     var canvas = this.$refs.tree
     this.canvas = canvas
@@ -87,24 +88,50 @@ export default {
       if (!gl) {
         return
       }
-      this.initScene()
+      this.initGl()
       this.paintGl()
     },
 
-    initScene() {
-      this.sceneBuilder = new SceneBuilder()
-        .setGl(this.gl)
-        .setSize(this.canvas.width, this.canvas.height)
-        .setConfig(scene1)
-        .build()
-      this.scene = this.sceneBuilder.getScene()
-      this.mesh = this.sceneBuilder.getModel('mesh')
-      this.mirror = this.sceneBuilder.getModel('mirror')
-      this.mirror2 = this.sceneBuilder.getModel('mirror2')
-      this.anchor = this.sceneBuilder.getModel('anchor')
-      this.camera = this.sceneBuilder.getCamera()
+    initGl: async function() {
+      this.camera = new BasicCamera()
+      this.camera.lookAt([80, 30, -80], [0, 30, 0], [0, 1, 0])
+      this.camera.perspective(3.14 / 2 / 2, 0.1, 10000)
+      this.camera.ortho(-5, 5, -5, 5, 0.001, 100)
+      this.camera.setAspect(2)
+      this.camera.transformType = BasicCamera.TransformType.LandObject
       this.reflectedCamera = new PlaneReflectedCamera(this.camera)
-      this.scene.addComponent(this.reflectedCamera)
+
+      this.cube = new Cube(this.gl) // else return fasle
+      this.mirror = new ObjMeshMirror(this.gl, '/static/models/mirror2/mirror.obj')
+      this.mirror.transform.setPosition([21.0, 10.0, 20.0])
+      this.mirror.transform.setScaling([20, 4, 1])
+      this.mirror.transform.setRotation(quat.fromEuler(quat.create(), -20.0, 5.0, 5.0))
+
+      this.mirror2 = new ObjMeshMirror(this.gl, '/static/models/mirror/mirror.obj')
+      this.mirror2.transform.setScaling([2, 2, 1])
+      this.mirror2.transform.setPosition([-40, 0, 0])
+      this.mirror2.transform.setRotation(quat.fromEuler(quat.create(), 0, 100, 0))
+
+      this.mesh = new ObjMesh(this.gl, '/static/models/tails/Tails.obj')
+      this.mesh.transform.setPosition([20, 0, 0])
+      // this.mesh.transform.setRotation()
+      this.mesh.transform.setScaling([3, 3, 3])
+      // this.mesh.transform.setMatrix(mat4.fromTranslation(mat4.create(), [0, 0,0]))
+      // this.mesh.transform.setScaling([0.2, 0.2, 0.2])
+      this.mesh2 = new ObjMesh(this.gl, '/static/models/tails/Tails.obj')
+      // this.mesh2.transform.setPosition([0, 0, -40])
+      this.mesh2.transform.setMatrix(mat4.fromTranslation(mat4.create(), [0, 0, -40]))
+
+      this.anchor = new Anchor(this.gl)
+      this.anchor.transform.setScaling([50, 50, 50])
+
+      this.scene = new Scene(this.gl).setSize(this.canvas.width, this.canvas.height).setMirrorEnabled(true)
+      this.scene.addComponent(this.mirror)
+      this.scene.addComponent(this.mirror2)
+      this.scene.addComponent(this.camera)
+      this.scene.addComponent(this.mesh)
+      this.scene.addComponent(this.anchor)
+      //  this.scene.addComponent(this.mesh2)
       setInterval(this.timePass, 100)
     },
 
@@ -116,7 +143,7 @@ export default {
       if (this.mesh !== null && this.rotating) {
         this.now += 5
         this.mesh.transform.setRotation(quat.fromEuler(quat.create(), 0, this.now, 0))
-      }
+     }
       this.paintGl()
     },
     walk() {
@@ -140,7 +167,7 @@ export default {
     reflect() {
       if (this.reflectedCamera.plane == null) {
         // alert(this.mirror.getMirrorCamera().getPlane())
-        this.reflectedCamera.changePlane(this.mirror2.getMirrorCamera().getPlane())
+        this.reflectedCamera.changePlane(this.mirror.getMirrorCamera().getPlane())
       } else {
         this.reflectedCamera.changePlane(null)
       }

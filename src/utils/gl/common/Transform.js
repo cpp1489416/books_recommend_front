@@ -77,6 +77,13 @@ export default class Transform {
     return this
   }
 
+  updateFromTransform(transform) {
+    this.eventListeners = transform.eventListeners
+    transform.eventListeners = null
+    this.setMatrix(transform.getMatrix())
+    return this
+  }
+
   getMatrix() {
     return this.matrix
   }
