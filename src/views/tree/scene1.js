@@ -46,7 +46,8 @@ export default {
       name: 'anchor',
       type: 'anchor',
       transform: {
-        scaling: [50, 50, 50]
+        scaling: [50, 50, 50],
+        scaling_back: [50, 50, 50]
       }
     }
   ]
