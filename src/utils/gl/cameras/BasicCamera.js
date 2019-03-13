@@ -6,8 +6,7 @@ import Camera from '../common/Camera'
 export default class BasicCamera extends Camera {
   static TransformType = {
     LandObject: 0,
-    Aircraft: 1,
-    Local: 2
+    Aircraft: 1
   }
 
   static ProjectionType = {
@@ -138,23 +137,26 @@ export default class BasicCamera extends Camera {
   }
 
   fly(distance) {
-    vec3.add(this.position, this.position, vec3.scale(vec3.create(), this.yVector, distance))
+    if (this.transformType === BasicCamera.TransformType.LandObject) {
+      this.position[1] += distance
+    } else {
+      vec3.add(this.position, this.position, vec3.scale(vec3.create(), this.yVector, distance))
+    }
     this.updateViewMatrix()
   }
 
   strafe(distance) {
-    vec3.add(this.position, this.position, vec3.scale(vec3.create(), this.xVector, distance))
+    if (this.transformType === BasicCamera.TransformType.LandObject) {
+      vec3.add(this.position, this.position, vec3.scale(vec3.create(), vec3.fromValues(this.xVector[0], 0, this.xVector[2]), distance))
+    } else {
+      vec3.add(this.position, this.position, vec3.scale(vec3.create(), this.xVector, distance))
+    }
     this.updateViewMatrix()
   }
 
   pitch(distance) {
     var rm = mat4.create()
-    if (this.transformType === BasicCamera.Local) {
       mat4.rotate(rm, rm, distance, this.xVector)
-      vec3.transformMat4(this.position, this.position, rm)
-    } else {
-      mat4.rotate(rm, rm, distance, this.xVector)
-    }
     vec3.transformMat4(this.yVector, this.yVector, rm)
     vec3.transformMat4(this.zVector, this.zVector, rm)
     this.updateViewMatrix()
@@ -162,9 +164,9 @@ export default class BasicCamera extends Camera {
 
   yall(distance) {
     var rm = mat4.create()
-    if (this.transformType === BasicCamera.Local) {
-      mat4.rotate(rm, rm, distance, this.yVector)
-      vec3.transformMat4(this.position, this.position, rm)
+    if (this.transformType === BasicCamera.TransformType.LandObject) {
+      mat4.rotate(rm, rm, distance, [0, 1, 0])
+      vec3.transformMat4(this.yVector, this.yVector, rm)
     } else {
       mat4.rotate(rm, rm, distance, this.yVector)
     }
@@ -175,12 +177,11 @@ export default class BasicCamera extends Camera {
 
   roll(distance) {
     var rm = mat4.create()
-    if (this.transformType === BasicCamera.Local) {
-      mat4.rotate(rm, rm, distance, this.zVector)
-      vec3.transformMat4(this.position, this.position, rm)
-    } else {
-      mat4.rotate(rm, rm, distance, this.zVector)
+    if (this.transformType === BasicCamera.TransformType.LandObject) {
+      return
     }
+    mat4.rotate(rm, rm, distance, this.zVector)
+    vec3.transformMat4(this.position, this.position, rm)
     vec3.transformMat4(this.xVector, this.xVector, rm)
     vec3.transformMat4(this.yVector, this.yVector, rm)
     this.updateViewMatrix()

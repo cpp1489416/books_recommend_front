@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-container>
       <el-aside style="width: 1000px;">
-        <canvas ref="tree" width="1000" height="500"/>
+        <canvas ref="tree" width="1000" height="500" tabindex="0"/>
       </el-aside>
       <el-main>
         <el-button @click="repaint">repaint</el-button>
@@ -77,21 +77,20 @@ export default {
   mounted() {
     var canvas = this.$refs.tree
     this.canvas = canvas
-    this.repaint()
+    this.initScene()
+    this.canvas.addEventListener('mousedown', this.onCanvasMouseDown, false)
+    this.canvas.addEventListener('mousemove', this.onCanvasMouseMove, false)
+    this.canvas.addEventListener('mouseup', this.onCanvasMouseUp, false)
+    this.canvas.addEventListener('keydown', this.onCanvasKeyDown, false)
   },
 
   methods: {
-    repaint: function() {
-      var gl = this.canvas.getContext('webgl2')
-      this.gl = gl
-      if (!gl) {
-        return
-      }
-      this.initScene()
-      this.paintGl()
+    repaint() {
+      window.location.reload()
     },
 
     initScene() {
+      this.gl = this.canvas.getContext('webgl2')
       this.sceneBuilder = new SceneBuilder()
         .setGl(this.gl)
         .setSize(this.canvas.width, this.canvas.height)
@@ -108,16 +107,48 @@ export default {
       setInterval(this.timePass, 100)
     },
 
-    paintGl: function() {
+    paintGl() {
       this.scene.draw()
     },
 
-    timePass: function() {
+    timePass() {
       if (this.mesh !== null && this.rotating) {
         this.now += 5
         this.mesh.transform.setRotation(quat.fromEuler(quat.create(), 0, this.now, 0))
       }
       this.paintGl()
+    },
+    onCanvasMouseDown(e) {
+      if (e.button === 0) {
+        this.leftButtonPressed = true
+      }
+    },
+    onCanvasMouseMove(e) {
+      if (this.leftButtonPressed) {
+        this.camera.yall(-e.movementX / 400.0)
+        this.camera.pitch(-e.movementY / 400.0)
+      }
+    },
+    onCanvasMouseUp(e) {
+      this.leftButtonPressed = false
+    },
+    onCanvasKeyDown(e) {
+      switch (e.key) {
+        case 'w':
+          this.camera.walk(-1)
+          break
+        case 's':
+          this.camera.walk(1)
+          break
+        case 'a':
+          this.camera.strafe(-1)
+          break
+        case 'd':
+          this.camera.strafe(1)
+          break
+        default:
+          break
+      }
     },
     walk() {
       this.camera.walk(Number(this.walkDistance))
@@ -140,7 +171,7 @@ export default {
     reflect() {
       if (this.reflectedCamera.plane == null) {
         // alert(this.mirror.getMirrorCamera().getPlane())
-        this.reflectedCamera.changePlane(this.mirror2.getMirrorCamera().getPlane())
+        this.reflectedCamera.changePlane(this.mirror.getMirrorCamera().getPlane())
       } else {
         this.reflectedCamera.changePlane(null)
       }

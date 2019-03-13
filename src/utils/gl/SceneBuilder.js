@@ -67,14 +67,18 @@ export default class SceneBuilder {
   }
 
   buildCamera(config) {
-    if (config.type !== 'perspective') {
+    if (config.projectionType !== 'perspective') {
       alert('not support camera version: ' + config.type)
     }
     const camera = new BasicCamera()
     camera.lookAt(config.position, config.target, config.up)
     camera.perspective(config.fovy, config.near, config.far)
     camera.setAspect(this.size.width / this.size.height)
-    camera.transformType = BasicCamera.TransformType.LandObject
+    if (config.moveType === 'land_object') {
+      camera.transformType = BasicCamera.TransformType.LandObject
+    } else {
+      camera.transformType = BasicCamera.TransformType.Aircraft
+    }
     return camera
   }
 

@@ -4,7 +4,8 @@ export default {
     mirrorEnabled: true
   },
   camera: {
-    type: 'perspective',
+    projectionType: 'perspective',
+    moveType: 'land_object',
     position: [80, 30, -80],
     up: [0, 1, 0],
     target: [0, 30, 0],
@@ -58,7 +59,15 @@ export default {
       transform: {
         position: [40, 0, 0]
       }
-
+    },
+    {
+      name: 'pancat',
+      type: 'obj_mesh',
+      url: '/static/models/stair/stair.obj',
+      transform: {
+        position: [40, 0, 0],
+        rotation: [-90, 0, 90]
+      }
     }
   ]
 }
