@@ -75,7 +75,7 @@ void main()
     if (material.illum == 1) {
       finalColor = ambientColor + diffuseColor;
     } else {
-    // specular
+      // specular
       vec3 eyeVector = normalize(eyePosition - positionVarying);
       vec3 halfVector = normalize(lightDirection + eyeVector);
       float specularStrength = dot(halfVector, normal);
