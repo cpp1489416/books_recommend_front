@@ -2,7 +2,7 @@
 export default {
   environment: {
     mirrorEnabled: true,
-    ambientLightIntensity: 0.4,
+    ambientLightIntensity: 0.1,
     directionLight: {
       enabled: true,
       direction: [0, 0, 1],
@@ -80,13 +80,16 @@ export default {
     {
       name: 'pancat',
       type: 'obj_mesh',
-      url: '/static/models/2plane/2plane.obj',
+      url: '/static/models/loco1/loco1.obj',
       transform: {
         //    position: [40, 0, 0],
         // rotation: [-90, 0, 90]
+        scaling: [4, 4, 4],
+        rotation: [0, -45, 0]
       }
     },
     {
+      visible: false,
       name: 'sphere',
       type: 'obj_mesh',
       url: '/static/models/sphere/sphere.obj'

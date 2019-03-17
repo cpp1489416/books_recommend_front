@@ -51,7 +51,7 @@ void main()
   }
 
   vec3 materialAmbientColor;
-  if (material.ambientMapEnabled == 1) {
+  if (material.ambientMapEnabled == 1)  {
     materialAmbientColor = texture2D(ambientMap, textureCoordVarying.xy).xyz;
   } else {
     materialAmbientColor = material.ambientColor;

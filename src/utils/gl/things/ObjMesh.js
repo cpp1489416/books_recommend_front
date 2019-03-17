@@ -81,19 +81,6 @@ export default class ObjMesh extends Thing {
         var diffuseMapUrl = component.material.diffuseMapUrl
         var ambientMapUrl = component.material.ambientMapUrl
 
-        if (typeof diffuseMapUrl === 'undefined') {
-          component.diffuseMapTexture = null
-        } else {
-          var diffuseMapTexture
-          if (!diffuseTexturesMap.has(diffuseMapUrl)) {
-            diffuseMapTexture = new Texture(this.gl).setBound(this.DIFFUSE_MAP_TEXTURE_BOUND).fromImage(component.material.diffuseMapUrl).setWrap(this.gl.REPEAT)
-            diffuseTexturesMap[diffuseMapUrl] = diffuseMapTexture
-          } else {
-            diffuseMapTexture = diffuseTexturesMap[diffuseMapUrl]
-          }
-          component.diffuseMapTexture = diffuseMapTexture
-        }
-
         if (typeof ambientMapUrl === 'undefined') {
           component.ambientMapTexture = null
         } else {
@@ -105,6 +92,19 @@ export default class ObjMesh extends Thing {
             ambientMapTexture = ambientTexturesMap[ambientMapUrl]
           }
           component.ambientMapTexture = ambientMapTexture
+        }
+
+        if (typeof diffuseMapUrl === 'undefined') {
+          component.diffuseMapTexture = null
+        } else {
+          var diffuseMapTexture
+          if (!diffuseTexturesMap.has(diffuseMapUrl)) {
+            diffuseMapTexture = new Texture(this.gl).setBound(this.DIFFUSE_MAP_TEXTURE_BOUND).fromImage(component.material.diffuseMapUrl).setWrap(this.gl.REPEAT)
+            diffuseTexturesMap[diffuseMapUrl] = diffuseMapTexture
+          } else {
+            diffuseMapTexture = diffuseTexturesMap[diffuseMapUrl]
+          }
+          component.diffuseMapTexture = diffuseMapTexture
         }
       }
     }

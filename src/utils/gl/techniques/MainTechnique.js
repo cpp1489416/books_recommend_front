@@ -44,6 +44,9 @@ export default class extends Technique {
     }
     this.setClipPlane0(null)
     this.setDirectionLight(null)
+
+    this.gl.uniform1i(this.getUniformLocation('ambientMap'), 0)
+    this.gl.uniform1i(this.getUniformLocation('diffuseMap'), 1)
   }
 
   drawThings() {
