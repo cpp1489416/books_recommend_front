@@ -80,6 +80,7 @@ export default {
     {
       name: 'pancat',
       type: 'obj_mesh',
+      visible: false,
       url: '/static/models/loco1/loco1.obj',
       transform: {
         //    position: [40, 0, 0],
@@ -89,7 +90,7 @@ export default {
       }
     },
     {
-      visible: false,
+      visible: true,
       name: 'sphere',
       type: 'obj_mesh',
       url: '/static/models/sphere/sphere.obj'

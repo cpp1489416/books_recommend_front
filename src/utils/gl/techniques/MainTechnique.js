@@ -20,6 +20,11 @@ export default class extends Technique {
         normalMatrix: this.getUniformLocation('normalMatrix'),
         ambientLightIntensity: this.getUniformLocation('ambientLightIntensity'),
         eyePosition: this.getUniformLocation('eyePosition'),
+        projectionMatrix: this.getUniformLocation('projectionMatrix'),
+        viewMatrix: this.getUniformLocation('viewMatrix'),
+        modelMatrix: this.getUniformLocation('modelMatrix'),
+        ambientMap: this.getUniformLocation('ambientMap'),
+        diffuseMap: this.getUniformLocation('diffuseMap'),
         clipPlane0: {
           enabled: this.getUniformLocation('clipPlane0.enabled'),
           plane: this.getUniformLocation('clipPlane0.plane')
@@ -45,8 +50,8 @@ export default class extends Technique {
     this.setClipPlane0(null)
     this.setDirectionLight(null)
 
-    this.gl.uniform1i(this.getUniformLocation('ambientMap'), 0)
-    this.gl.uniform1i(this.getUniformLocation('diffuseMap'), 1)
+    this.gl.uniform1i(this.locations.uniforms.ambientMap, 0)
+    this.gl.uniform1i(this.locations.uniforms.diffuseMap, 1)
   }
 
   drawThings() {
@@ -65,10 +70,12 @@ export default class extends Technique {
   getPositionAttribute() { return this.locations.attributes.position }
   getTextureCoordAttribute() { return this.locations.attributes.textureCoord }
   getNormalAttribute() { return this.locations.attributes.normal }
-  getProjectionMatrixUniform() { return this.getUniformLocation('projectionMatrix') }
-  getViewMatrixUniform() { return this.getUniformLocation('viewMatrix') }
-  getModelMatrixUniform() { return this.getUniformLocation('modelMatrix') }
-  getSamplerUniform() { return this.getUniformLocation('pictures') }
+  getProjectionMatrixUniform() { return this.locations.uniforms.projectionMatrix }
+  getViewMatrixUniform() { return this.locations.uniforms.viewMatrix }
+  getModelMatrixUniform() { return this.locations.uniforms.modelMatrix }
+  getSamplerUniform() { return null }
+  getAmbientMapTextureBound() { return 0 }
+  getDiffuseMapTextureBound() { return 1 }
 
   setNormalMatrix(matrix) {
     this.gl.uniformMatrix4fv(this.locations.uniforms.normalMatrix, this.gl.FALSE, matrix)
