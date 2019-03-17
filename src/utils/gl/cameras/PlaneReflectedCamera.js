@@ -86,4 +86,8 @@ export default class PlaneReflectedCamera extends Camera {
   getProjectionMatrix() {
     return this.parentCamera.getProjectionMatrix()
   }
+
+  getPosition() {
+    return this.position
+  }
 }

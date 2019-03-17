@@ -68,6 +68,11 @@ export default class {
     return this
   }
 
+  setAmbientLightIntensity(intensity) {
+    this.mainTechnique.setAmbientLightIntensity(intensity)
+    return this
+  }
+
   setDirectionLight(light) {
     this.mainTechnique.setDirectionLight(light)
     return this

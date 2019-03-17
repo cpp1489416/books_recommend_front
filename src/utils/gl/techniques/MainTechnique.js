@@ -18,6 +18,8 @@ export default class extends Technique {
       },
       uniforms: {
         normalMatrix: this.getUniformLocation('normalMatrix'),
+        ambientLightIntensity: this.getUniformLocation('ambientLightIntensity'),
+        eyePosition: this.getUniformLocation('eyePosition'),
         clipPlane0: {
           enabled: this.getUniformLocation('clipPlane0.enabled'),
           plane: this.getUniformLocation('clipPlane0.plane')
@@ -25,6 +27,10 @@ export default class extends Technique {
         material: {
           diffuseColor: this.getUniformLocation('material.diffuseColor'),
           diffuseMapEnabled: this.getUniformLocation('material.diffuseMapEnabled'),
+          ambientColor: this.getUniformLocation('material.ambientColor'),
+          ambientMapEnabled: this.getUniformLocation('material.ambientMapEnabled'),
+          specularColor: this.getUniformLocation('material.specularColor'),
+          specularSmoothness: this.getUniformLocation('material.specularSmoothness'),
           normalExist: this.getUniformLocation('material.normalExist')
         },
         directionLight: {
@@ -42,6 +48,7 @@ export default class extends Technique {
   drawThings() {
     this.getProgram().bind()
     this.updateProjectionMatrixAndViewMatrix()
+    this.setEyePosition(this.getCamera().getPosition())
     for (var i in this.things) {
       var thing = this.things[i]
       this.getProgram().bind()
@@ -63,6 +70,11 @@ export default class extends Technique {
     this.gl.uniformMatrix4fv(this.locations.uniforms.normalMatrix, this.gl.FALSE, matrix)
   }
 
+  setEyePosition(position) {
+    this.getProgram().bind()
+    this.gl.uniform3fv(this.locations.uniforms.eyePosition, position)
+  }
+
   setClipPlane0(plane) {
     this.getProgram().bind()
     if (plane === null || plane.enabled === 0 || plane.enabled === false) {
@@ -79,25 +91,40 @@ export default class extends Technique {
     }
   }
 
+  setAmbientLightIntensity(intensity) {
+    this.getProgram().bind()
+    this.gl.uniform1f(this.locations.uniforms.ambientLightIntensity, intensity)
+  }
+
   setMaterial(material) {
     this.getProgram().bind()
-    if (typeof material.diffuseColor !== 'undefined') {
-      this.gl.uniform3fv(this.locations.uniforms.material.diffuseColor, material.diffuseColor)
+    // diffuse color
+    this.gl.uniform3fv(this.locations.uniforms.material.diffuseColor, material.diffuseColor)
+    let diffuseMapEnabled = material.diffuseMapEnabled
+    if (typeof material.diffuseMapEnabled === 'boolean') {
+      diffuseMapEnabled = material.diffuseMapEnabled ? 1 : 0
     }
-    if (typeof material.diffuseMapEnabled !== 'undefined') {
-      let diffuseMapEnabled = material.diffuseMapEnabled
-      if (typeof material.diffuseMapEnabled === 'boolean') {
-        diffuseMapEnabled = material.diffuseMapEnabled ? 1 : 0
-      }
-      this.gl.uniform1i(this.locations.uniforms.material.diffuseMapEnabled, diffuseMapEnabled)
+    this.gl.uniform1i(this.locations.uniforms.material.diffuseMapEnabled, diffuseMapEnabled)
 
-      if (typeof material.normalExist === 'undefined') {
-        material.normalExist = 1
-      } else if (typeof material.normalExist === 'boolean') {
-        material.normalExist = material.normalExist ? 1 : 0
-      }
-      this.gl.uniform1i(this.locations.uniforms.material.normalExist, material.normalExist)
+    // ambient color
+    this.gl.uniform3fv(this.locations.uniforms.material.ambientColor, material.ambientColor)
+    let ambientMapEnabled = material.ambientMapEnabled
+    if (typeof material.ambientMapEnabled === 'boolean') {
+      ambientMapEnabled = material.ambientMapEnabled ? 1 : 0
     }
+    this.gl.uniform1i(this.locations.uniforms.material.ambientMapEnabled, ambientMapEnabled)
+
+    // specular color
+    this.gl.uniform3fv(this.locations.uniforms.material.specularColor, material.specularColor)
+    this.gl.uniform1f(this.locations.uniforms.material.specularSmoothness, material.specularSmoothness)
+
+    // normal exist
+    if (typeof material.normalExist === 'undefined') {
+      material.normalExist = 1
+    } else if (typeof material.normalExist === 'boolean') {
+      material.normalExist = material.normalExist ? 1 : 0
+    }
+    this.gl.uniform1i(this.locations.uniforms.material.normalExist, material.normalExist)
   }
 
   setDirectionLight(light) {

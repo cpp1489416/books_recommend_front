@@ -144,6 +144,10 @@ export default class SceneBuilder {
         config.directionLight.intensity = 1.0
       }
     }
+
+    if (typeof config.ambientLightIntensity === 'undefined') {
+      config.ambientLightIntensity = 1.0
+    }
     return config
   }
 
@@ -152,6 +156,7 @@ export default class SceneBuilder {
       .setSize(this.size.width, this.size.height)
       .setDirectionLight(this.environment.directionLight)
       .setMirrorEnabled(this.environment.mirrorEnabled)
+      .setAmbientLightIntensity(this.environment.ambientLightIntensity)
 
     for (var [name, model] of this.modelsMap.entries()) {
       model.name = name

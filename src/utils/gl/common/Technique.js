@@ -40,6 +40,10 @@ export default class {
     return this.things
   }
 
+  getCamera() {
+    return this.camera
+  }
+
   setCamera(camera) {
     this.camera = camera;
   }

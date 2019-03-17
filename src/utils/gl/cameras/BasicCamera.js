@@ -186,4 +186,8 @@ export default class BasicCamera extends Camera {
     vec3.transformMat4(this.yVector, this.yVector, rm)
     this.updateViewMatrix()
   }
+
+  getPosition() {
+    return this.position
+  }
 }

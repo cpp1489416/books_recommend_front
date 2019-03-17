@@ -2,11 +2,12 @@
 export default {
   environment: {
     mirrorEnabled: true,
+    ambientLightIntensity: 0.4,
     directionLight: {
       enabled: true,
       direction: [0, 0, 1],
       color: [1, 1, 1],
-      intensity: 1.0
+      intensity: 0.8
     }
   },
   camera: {
@@ -84,6 +85,11 @@ export default {
         //    position: [40, 0, 0],
         // rotation: [-90, 0, 90]
       }
+    },
+    {
+      name: 'sphere',
+      type: 'obj_mesh',
+      url: '/static/models/car/car.obj'
     }
   ]
 }

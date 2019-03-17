@@ -97,14 +97,18 @@ export default class ObjMeshScanner {
       if (word === 'newmtl') {
         this.matrialsMap[scanner.nextExpectCommont()] = curInfo = {}
       } else if (word === 'map_Kd') {
-        curInfo.pictureUrl = this.addToPath(this.url, scanner.nextExpectCommont())
+        curInfo.diffuseMapUrl = this.addToPath(this.url, scanner.nextExpectCommont())
         scanner.jumpToNextLine()
+      } else if (word === 'map_Ka') {
+        curInfo.ambientMapUrl = this.addToPath(this.url, scanner.nextExpectCommont())
       } else if (word === 'Ka') {
         curInfo.ambientColor = [scanner.nextNumber(), scanner.nextNumber(), scanner.nextNumber()]
       } else if (word === 'Kd') {
         curInfo.diffuseColor = [scanner.nextNumber(), scanner.nextNumber(), scanner.nextNumber()]
       } else if (word === 'Ks') {
         curInfo.specularColor = [scanner.nextNumber(), scanner.nextNumber(), scanner.nextNumber()]
+      } else if (word === 'Ns') {
+        curInfo.specularSmoothness = scanner.nextNumber()
       }
     }
   }
