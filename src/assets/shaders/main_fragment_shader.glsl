@@ -30,6 +30,7 @@ uniform mat4 modelMatrix;
 uniform mat4 normalMatrix;
 uniform sampler2D ambientMap;
 uniform sampler2D diffuseMap;
+uniform sampler2D shadowMap;
 uniform DirectionLight directionLight;
 uniform ClipPlane clipPlane0;
 uniform Material material;
@@ -38,6 +39,7 @@ varying vec3 textureCoordVarying;
 varying vec3 positionVarying;
 varying vec3 normalVarying;
 
+float shadowIntensity;
 vec3 lightDirection;
 vec3 normal;
 vec3 materialAmbientColor;
