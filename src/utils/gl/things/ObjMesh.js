@@ -12,8 +12,8 @@ export default class ObjMesh extends Thing {
     super(gl)
     this.url = url
     this.fileLoaded = false
-    this.DIFFUSE_MAP_TEXTURE_BOUND = 0
-    this.AMBIENT_MAP_TEXTURE_BOUND = 1
+    this.AMBIENT_MAP_TEXTURE_BOUND = 0
+    this.DIFFUSE_MAP_TEXTURE_BOUND = 1
   }
 
   onCreateVbo() {
@@ -74,7 +74,8 @@ export default class ObjMesh extends Thing {
       this.gl.enableVertexAttribArray(textureCoordId)
       this.gl.vertexAttribPointer(textureCoordId, 3, this.gl.FLOAT, this.gl.FALSE, 0, this.gl.NULL)
 
-      var texturesMap = new Map()
+      var diffuseTexturesMap = new Map()
+      var ambientTexturesMap = new Map()
       for (var i in this.components) {
         var component = this.components[i]
         var diffuseMapUrl = component.material.diffuseMapUrl
@@ -84,11 +85,11 @@ export default class ObjMesh extends Thing {
           component.diffuseMapTexture = null
         } else {
           var diffuseMapTexture
-          if (!texturesMap.has(diffuseMapUrl)) {
+          if (!diffuseTexturesMap.has(diffuseMapUrl)) {
             diffuseMapTexture = new Texture(this.gl).setBound(this.DIFFUSE_MAP_TEXTURE_BOUND).fromImage(component.material.diffuseMapUrl).setWrap(this.gl.REPEAT)
-            texturesMap[diffuseMapUrl] = diffuseMapTexture
+            diffuseTexturesMap[diffuseMapUrl] = diffuseMapTexture
           } else {
-            diffuseMapTexture = texturesMap[diffuseMapUrl]
+            diffuseMapTexture = diffuseTexturesMap[diffuseMapUrl]
           }
           component.diffuseMapTexture = diffuseMapTexture
         }
@@ -97,18 +98,13 @@ export default class ObjMesh extends Thing {
           component.ambientMapTexture = null
         } else {
           var ambientMapTexture
-          if (!texturesMap.has(ambientMapUrl)) {
+          if (!ambientTexturesMap.has(ambientMapUrl)) {
             ambientMapTexture = new Texture(this.gl).setBound(this.AMBIENT_MAP_TEXTURE_BOUND).fromImage(component.material.ambientMapUrl).setWrap(this.gl.REPEAT)
-            texturesMap[ambientMapUrl] = ambientMapTexture
+            ambientTexturesMap[ambientMapUrl] = ambientMapTexture
           } else {
-            ambientMapTexture = texturesMap[ambientMapUrl]
+            ambientMapTexture = ambientTexturesMap[ambientMapUrl]
           }
           component.ambientMapTexture = ambientMapTexture
-        }
-
-        var material = component.material
-        if (typeof material.specularSmoothness === 'undefined') {
-        } else {
         }
       }
     }
@@ -129,10 +125,11 @@ export default class ObjMesh extends Thing {
       }
 
       this.technique.setMaterial({
-        diffuseColor: component.material.diffuseColor,
-        diffuseMapEnabled: component.diffuseMapTexture !== null,
+        illum: component.material.illum,
         ambientColor: component.material.ambientColor,
         ambientMapEnabled: component.ambientMapTexture !== null,
+        diffuseColor: component.material.diffuseColor,
+        diffuseMapEnabled: component.diffuseMapTexture !== null,
         specularColor: component.material.specularColor,
         specularSmoothness: component.material.specularSmoothness
       })

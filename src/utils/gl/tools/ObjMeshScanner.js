@@ -109,6 +109,8 @@ export default class ObjMeshScanner {
         curInfo.specularColor = [scanner.nextNumber(), scanner.nextNumber(), scanner.nextNumber()]
       } else if (word === 'Ns') {
         curInfo.specularSmoothness = scanner.nextNumber()
+      } else if (word === 'illum') {
+        curInfo.illum = scanner.nextNumber()
       }
     }
   }

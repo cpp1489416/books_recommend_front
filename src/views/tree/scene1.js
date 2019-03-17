@@ -89,7 +89,7 @@ export default {
     {
       name: 'sphere',
       type: 'obj_mesh',
-      url: '/static/models/car/car.obj'
+      url: '/static/models/sphere/sphere.obj'
     }
   ]
 }

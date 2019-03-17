@@ -13,24 +13,25 @@ struct ClipPlane {
 };
 
 struct Material {
-  vec3 diffuseColor;
-  int diffuseMapEnabled;
+  int illum; // 0 if disable light, 1 ambient and diffuse, 2 ambient, diffuse and specular
   vec3 ambientColor;
   int ambientMapEnabled;
+  vec3 diffuseColor;
+  int diffuseMapEnabled;
   vec3 specularColor;
   float specularSmoothness;
   int normalExist;
 };
 
+uniform float ambientLightIntensity;
+uniform vec3 eyePosition;
 uniform mat4 modelMatrix;
 uniform mat4 normalMatrix;
+uniform sampler2D ambientMap;
+uniform sampler2D diffuseMap;
 uniform DirectionLight directionLight;
 uniform ClipPlane clipPlane0;
 uniform Material material;
-uniform sampler2D diffuseMap;
-uniform sampler2D ambientMap;
-uniform float ambientLightIntensity;
-uniform vec3 eyePosition;
 
 varying vec3 textureCoordVarying;
 varying vec3 positionVarying;
@@ -56,9 +57,14 @@ void main()
     materialAmbientColor = material.ambientColor;
   }
 
-  if (directionLight.enabled == 0 || material.normalExist == 0) {
-    gl_FragColor = vec4(materialDiffuseColor, 1.0);
+  if (directionLight.enabled == 0 || material.normalExist == 0 || material.illum == 0) {
+    gl_FragColor = vec4(materialAmbientColor, 1.0);
   } else {
+    vec3 finalColor;
+
+    // ambient
+    vec3 ambientColor = vec3(materialAmbientColor) * ambientLightIntensity;
+
     // diffuse
     vec3 lightDirection = normalize(-directionLight.direction);
     vec3 normal = normalize((normalMatrix * vec4(normalVarying, 1.0)).xyz);
@@ -66,15 +72,18 @@ void main()
     diffuseStrength = clamp(diffuseStrength, 0.0, 1.0);
     vec3 diffuseColor = diffuseStrength * directionLight.color * materialDiffuseColor * directionLight.intensity;
 
-    // ambient
-    vec3 ambientColor = vec3(materialAmbientColor) * ambientLightIntensity;
-
+    if (material.illum == 1) {
+      finalColor = ambientColor + diffuseColor;
+    } else {
     // specular
-    vec3 eyeVector = normalize(eyePosition - positionVarying);
-    vec3 halfVector = normalize(lightDirection + eyeVector);
-    float specularStrength = dot(halfVector, normal);
-    specularStrength = pow(specularStrength, material.specularSmoothness);
-    vec3 specularColor = specularStrength * material.specularColor * directionLight.color * directionLight.intensity;
-    gl_FragColor = vec4(diffuseColor + ambientColor + specularColor, 1.0);
+      vec3 eyeVector = normalize(eyePosition - positionVarying);
+      vec3 halfVector = normalize(lightDirection + eyeVector);
+      float specularStrength = dot(halfVector, normal);
+      specularStrength = pow(abs(specularStrength), material.specularSmoothness);
+      vec3 specularColor = specularStrength * material.specularColor * directionLight.color * directionLight.intensity;
+      finalColor = ambientColor + diffuseColor + specularColor;
+    }
+
+    gl_FragColor = vec4(finalColor, 1.0);
   }
 }

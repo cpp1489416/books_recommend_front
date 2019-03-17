@@ -25,6 +25,7 @@ export default class extends Technique {
           plane: this.getUniformLocation('clipPlane0.plane')
         },
         material: {
+          illum: this.getUniformLocation('material.illum'),
           diffuseColor: this.getUniformLocation('material.diffuseColor'),
           diffuseMapEnabled: this.getUniformLocation('material.diffuseMapEnabled'),
           ambientColor: this.getUniformLocation('material.ambientColor'),
@@ -98,13 +99,8 @@ export default class extends Technique {
 
   setMaterial(material) {
     this.getProgram().bind()
-    // diffuse color
-    this.gl.uniform3fv(this.locations.uniforms.material.diffuseColor, material.diffuseColor)
-    let diffuseMapEnabled = material.diffuseMapEnabled
-    if (typeof material.diffuseMapEnabled === 'boolean') {
-      diffuseMapEnabled = material.diffuseMapEnabled ? 1 : 0
-    }
-    this.gl.uniform1i(this.locations.uniforms.material.diffuseMapEnabled, diffuseMapEnabled)
+    // illum
+    this.gl.uniform1i(this.locations.uniforms.material.illum, material.illum)
 
     // ambient color
     this.gl.uniform3fv(this.locations.uniforms.material.ambientColor, material.ambientColor)
@@ -114,9 +110,21 @@ export default class extends Technique {
     }
     this.gl.uniform1i(this.locations.uniforms.material.ambientMapEnabled, ambientMapEnabled)
 
-    // specular color
-    this.gl.uniform3fv(this.locations.uniforms.material.specularColor, material.specularColor)
-    this.gl.uniform1f(this.locations.uniforms.material.specularSmoothness, material.specularSmoothness)
+    if (material.illum >= 1) {
+      // diffuse color
+      this.gl.uniform3fv(this.locations.uniforms.material.diffuseColor, material.diffuseColor)
+      let diffuseMapEnabled = material.diffuseMapEnabled
+      if (typeof material.diffuseMapEnabled === 'boolean') {
+        diffuseMapEnabled = material.diffuseMapEnabled ? 1 : 0
+      }
+      this.gl.uniform1i(this.locations.uniforms.material.diffuseMapEnabled, diffuseMapEnabled)
+    }
+
+    if (material.illum >= 2) {
+      // specular color
+      this.gl.uniform3fv(this.locations.uniforms.material.specularColor, material.specularColor)
+      this.gl.uniform1f(this.locations.uniforms.material.specularSmoothness, material.specularSmoothness)
+    }
 
     // normal exist
     if (typeof material.normalExist === 'undefined') {
