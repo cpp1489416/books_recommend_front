@@ -37,7 +37,27 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
-
+  {
+    path: '/my_data',
+    component: Layout,
+    redirect: '/my_data/recommendations',
+    name: 'My Data',
+    meta: { title: 'My Data', icon: 'example' },
+    children: [
+      {
+        path: 'recommendations',
+        name: 'recommendations',
+        component: () => import('@/views/my_data/recommendations'),
+        meta: {title: 'Recommendations', icon: 'table'}
+      },
+      {
+        path: 'profile',
+        name: 'profile',
+        component: () => import('@/views/my_data/profile'),
+        meta: {title: 'profile', icon: 'edit'}
+      },
+    ]
+  },
   {
     path: '/data',
     component: Layout,
@@ -86,36 +106,27 @@ export const constantRouterMap = [
         meta: { title: 'Book Info', icon: 'form' }
       },
       {
-        path: 'recommendations',
-        name: 'recommendations',
-        component: () => import('@/views/data/recommendations'),
-        meta: {title: 'Recommendations', icon: 'table'}
-      },
-      {
         hidden: true,
         path: 'recommendations/user/:id',
         name: 'recommendations_of_user',
         component: () => import('@/views/data/recommendations_of_user'),
         meta: {title: 'Recommendations', icon: 'table'}
       },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
+    ],
   },
 
   {
-    path: '/form',
+    path: '/3d',
     component: Layout,
+    redirect: '/3d/',
+    name: 'Data',
+    meta: { title: 'Data', icon: 'example' },
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: 'example',
+        name: '3d',
+        component: () => import('@/views/tree/index'),
+        meta: { title: '3d', icon: 'example' }
       }
     ]
   },

@@ -105,7 +105,7 @@ export default {
       })
     },
     back() {
-      this.$router.back()
+      this.$router.push('/data/books')
     },
     async rate() {
       this.ratingSubmitting = true

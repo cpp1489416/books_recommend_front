@@ -32,7 +32,7 @@
       </el-table-column>
       <el-table-column label="title">
         <template slot-scope="scope">
-          {{ scope.row.title }}
+          <el-button type="text" @click="jumpToBookInfo(scope.row.id)">{{ scope.row.title }}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="author" width="110" align="center">
@@ -133,6 +133,9 @@ export default {
           id: id
         }
       })
+    },
+    jumpToBookInfo(id) {
+      this.$router.push('/data/books/' + id)
     }
   }
 }
