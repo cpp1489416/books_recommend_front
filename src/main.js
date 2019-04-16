@@ -13,17 +13,16 @@ import router from './router'
 import store from './store'
 
 import '@/icons' // icon
-import '@/permission' // permission control
 
-import request from '@/utils/request'
+import ajax from '@/utils/ajax'
 
-import '@/mock'
+// import '@/mock'
 
 Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 
-Vue.prototype.ajax = request
+Vue.prototype.ajax = ajax
 
 new Vue({
   el: '#app',

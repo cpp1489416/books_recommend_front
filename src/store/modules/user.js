@@ -1,11 +1,13 @@
 import { login, logout, getUserInfo } from '@/api/login'
+import ajax from '@/utils/ajax'
+import store from '../index'
 
 const user = {
   state: {
     username: '',
     avatar: '/static/logo.png',
     roles: [],
-    userInfo: {},
+    info: {},
     ignoreAjaxMessageBox: false
   },
 
@@ -22,8 +24,8 @@ const user = {
     SET_ROLES: (state, roles) => {
       state.roles = roles
     },
-    SET_USER_INFO: (state, userInfo) => {
-      state.userInfo = userInfo
+    SET_USER_INFO: (state, info) => {
+      state.info = info
     },
     SET_IGNORE_AJAX_MESSAGE_BOX: (state, v) => {
       state.ignoreAjaxMessageBox = v
@@ -32,16 +34,27 @@ const user = {
 
   actions: {
     // 登录
-    Login({ commit }, userInfo) {
-      const username = userInfo.username.trim()
+    Login: function({ commit }, user) {
+      const username = user.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
+        ajax({
+          url: '/login',
+          method: 'post',
+          data: {
+            username,
+            password: user.password
+          }
+        }).then(response => {
           if (response.code === '0') {
             commit('SET_USERNAME', username)
+            // the following code should be corrected, this is not good, why 'this' means store?
+            this.dispatch('GetUserInfo').then(function() {
+              resolve(response)
+            })
           } else {
             commit('SET_USERNAME', '')
+            resolve(response)
           }
-          resolve(response)
         }).catch(error => {
           commit('SET_USERNAME', '')
           reject(error)
@@ -52,7 +65,11 @@ const user = {
     // 获取用户信息
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getUserInfo(true).then(response => {
+        ajax({
+          url: '/user',
+          method: 'get',
+          ignoreConfirm: true
+        }).then(response => {
           const info = response.info
           commit('SET_USERNAME', info.username)
           commit('SET_USER_INFO', info)

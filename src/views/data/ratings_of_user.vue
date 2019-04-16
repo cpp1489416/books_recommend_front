@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input style="width: 200px;" class="filter-item" v-model="isbn" placeholder="Book Isbn"
+      <el-input style="width: 200px;" class="filter-item" v-model="userId" placeholder="User Id"
                 @keyup.native.enter="reloadPage"/>
       <el-select v-model="queryParams.order_by" class="filter-item">
         <el-option v-for="item in orderBys" :value="item"/>
@@ -17,20 +17,20 @@
       fit
       highlight-current-row>
       <!--
-      <el-table-column align="center" label="ID" width="95">
+      <el-data-column align="center" label="ID" width="95">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
-      </el-table-column>
+      </el-data-column>
       -->
       <el-table-column label="Book Title" align="center">
         <template slot-scope="scope">
-          {{ bookTitle }}
+          {{scope.row.book.title }}
         </template>
       </el-table-column>
       <el-table-column label="User Name">
         <template slot-scope="scope">
-          {{scope.row.user.name}}
+          {{username}}
         </template>
       </el-table-column>
       <el-table-column label="Rating">
@@ -48,7 +48,6 @@
 </template>
 
 <script>
-  import {getList} from '@/api/table'
   import merge from 'webpack-merge'
   import Pagination from '@/components/Pagination'
 
@@ -68,7 +67,7 @@
         queryParams: {
           name: null,
           location: null,
-          order_by: 'isbn',
+          order_by: 'id',
           page_number: 1,
           page_size: 10,
         },
@@ -77,13 +76,13 @@
         listLoading: true,
         username: '',
         orderBys: [
-          'id', '-id',
+          'id', '-id', 'age', '-age'
         ],
-        isbn: '',
+        userId: '',
       }
     },
     created() {
-      this.isbn = this.$route.params.isbn
+      this.userId = this.$route.params.id
       this.reloadPage()
     },
     methods: {
@@ -98,10 +97,10 @@
         if (this.queryParams.order_by === '') {
           this.queryParams.order_by = 'id'
         }
-        await this.ajax.get('/books/isbn/' + this.$route.params.isbn).then(response => {
-          this.bookTitle = response.info.title
+        await this.ajax.get('/users/' + this.$route.params.id).then(response => {
+          this.username = response.info.name
         })
-        await this.ajax.get('/ratings/book/isbn/' + this.$route.params.isbn, {
+        await this.ajax.get('/ratings/user/' + this.$route.params.id, {
           params: this.queryParams
         }).then(response => {
           this.count = response.info.count
@@ -111,11 +110,11 @@
         })
       },
       reloadPage: function () {
-        if (this.isbn=== '') {
-          this.isbn= '1'
+        if (this.userId === '') {
+          this.userId = '1'
         }
-        if (this.$route.params.isbn!== this.isbn) {
-          this.$router.push('/example/rates_of_book/' + this.isbn)
+        if (this.$route.params.id !== this.userId) {
+          this.$router.push('/example/rates_of_user/' + this.userId)
         }
         this.getList()
       }

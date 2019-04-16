@@ -1,7 +1,7 @@
-import request from '@/utils/request'
+import ajax from '@/utils/ajax'
 
 export function login(username, password) {
-  return request({
+  return ajax({
     url: '/login',
     method: 'post',
     data: {
@@ -12,7 +12,7 @@ export function login(username, password) {
 }
 
 export function getUserInfo(ignoreConfirm) {
-  return request({
+  return ajax({
     url: '/user/info',
     method: 'get',
     ignoreConfirm: ignoreConfirm
@@ -20,7 +20,7 @@ export function getUserInfo(ignoreConfirm) {
 }
 
 export function logout() {
-  return request({
+  return ajax({
     url: '/logout',
     method: 'get'
   })

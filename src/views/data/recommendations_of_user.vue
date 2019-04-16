@@ -1,24 +1,18 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <div class="filter-container" v-loading="listLoading">
+      <label class="el-form-item__label">
+        Recommendations for "{{username}}":
+      </label>
       <el-input
-        v-model="queryParams.isbn"
+        v-model="queryParams.k"
         style="width: 200px;"
         class="filter-item"
-        placeholder="isbn"
+        placeholder="k (recommend param)"
         @keyup.native.enter="reloadPage"/>
-      <el-input
-        v-model="queryParams.title"
-        style="width: 200px;"
-        class="filter-item"
-        placeholder="title"
-        @keyup.native.enter="reloadPage"/>
-      <el-select v-model="queryParams.order_by" class="filter-item">
-        <el-option v-for="item in orderBys" :value="item"/>
-      </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="reloadPage"> Search</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="reloadPage">Recommend</el-button>
+      <el-button class="filter-item" icon="el-icon-back" @click="$router.back()">Back</el-button>
     </div>
-
     <el-table
       v-loading="listLoading"
       :data="content"
@@ -26,13 +20,6 @@
       border
       fit
       highlight-current-row>
-      <!--
-      <el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.id }}
-        </template>
-      </el-table-column>
-      -->
       <el-table-column label="" width="80" align="center">
         <template slot-scope="scope">
           <img :src="scope.row.image_url" height="40px">
@@ -61,7 +48,7 @@
       <el-table-column label="action" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini">edit</el-button>
-          <el-button size="mini"> ratings </el-button>
+          <el-button size="mini" @click="jumpToRatings(scope.row.id)"> ratings </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -74,7 +61,6 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
 import merge from 'webpack-merge'
 import Pagination from '@/components/Pagination'
 
@@ -95,8 +81,7 @@ export default {
   data() {
     return {
       queryParams: {
-        title: null,
-        isbn: null,
+        k: 4,
         order_by: 'id',
         page_number: 1,
         page_size: 10
@@ -104,6 +89,7 @@ export default {
       count: 0,
       content: null,
       listLoading: true,
+      username: '',
       orderBys: [
         'id', '-id', 'title', '-title', 'isbn', '-isbn'
       ]
@@ -113,7 +99,7 @@ export default {
     this.reloadPage()
   },
   methods: {
-    getList: function(info) {
+    async getList(info) {
       this.listLoading = true
       if (info !== undefined) {
         this.queryParams.page_number = info.page
@@ -124,7 +110,11 @@ export default {
       if (this.queryParams.order_by === '') {
         this.queryParams.order_by = 'id'
       }
-      this.ajax.get('/books', {
+      await this.ajax.get('users/' + this.$route.params.id, {
+      }).then(response => {
+        this.username = response.info.name
+      })
+      await this.ajax.get('/recommendations/user/' + this.$route.params.id, {
         params: this.queryParams
       }).then(response => {
         this.count = response.info.count
@@ -135,6 +125,14 @@ export default {
     },
     reloadPage: function() {
       this.getList()
+    },
+    jumpToRatings(id) {
+      this.$router.push({
+        name: 'ratings_of_book',
+        params: {
+          id: id
+        }
+      })
     }
   }
 }

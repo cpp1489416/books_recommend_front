@@ -62,7 +62,7 @@ export default class extends Thing {
 
   setCamera() {}
 
-  setTexture(texture  ) {
+  setTexture(texture) {
     this.texture = texture
   }
 }

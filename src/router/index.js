@@ -8,6 +8,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '../views/layout/Layout'
+import permission from './permission'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -38,37 +39,64 @@ export const constantRouterMap = [
   },
 
   {
-    path: '/example',
+    path: '/data',
     component: Layout,
-    redirect: '/example/books',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    redirect: '/data/books',
+    name: 'Data',
+    meta: { title: 'Data', icon: 'example' },
     children: [
       {
         path: 'books',
         name: 'Books',
-        component: () => import('@/views/table/books'),
+        component: () => import('@/views/data/books'),
         meta: { title: 'Books', icon: 'table' }
       },
       {
         path: 'users',
         name: 'users',
-        component: () => import('@/views/table/users'),
+        component: () => import('@/views/data/users'),
         meta: { title: 'Users', icon: 'table' }
       },
       {
         hidden: true,
         path: 'ratings_of_user/:id',
         name: 'ratings_of_user',
-        component: () => import('@/views/table/ratings_of_user'),
+        component: () => import('@/views/data/ratings_of_user'),
         meta: { title: 'Rates Of User', icon: 'table' }
       },
       {
         hidden: true,
-        path: 'ratings_of_book/:isbn',
+        path: 'ratings_of_book/:id',
         name: 'ratings_of_book',
-        component: () => import('@/views/table/ratings_of_book'),
+        component: () => import('@/views/data/ratings_of_book'),
         meta: { title: 'Rates Of Book', icon: 'table' }
+      },
+      {
+        hidden: true,
+        path: 'books/add',
+        name: 'books_add',
+        component: () => import('@/views/data/books_add'),
+        meta: { title: 'Add Book', icon: 'form' }
+      },
+      {
+        hidden: true,
+        path: 'books/:id',
+        name: 'books_info',
+        component: () => import('@/views/data/books_info'),
+        meta: { title: 'Book Info', icon: 'form' }
+      },
+      {
+        path: 'recommendations',
+        name: 'recommendations',
+        component: () => import('@/views/data/recommendations'),
+        meta: {title: 'Recommendations', icon: 'table'}
+      },
+      {
+        hidden: true,
+        path: 'recommendations/user/:id',
+        name: 'recommendations_of_user',
+        component: () => import('@/views/data/recommendations_of_user'),
+        meta: {title: 'Recommendations', icon: 'table'}
       },
       {
         path: 'tree',
@@ -155,7 +183,7 @@ export const constantRouterMap = [
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+        path: 'https://github.com/cxc6922',
         meta: { title: 'External Link', icon: 'link' }
       }
     ]
@@ -164,9 +192,15 @@ export const constantRouterMap = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-export default new Router({
+var router =  new Router({
   // mode: 'history', //后端支持可开
   base: '/books_recommend/',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
+
+permission(router)
+
+export { router }
+
+export default router
