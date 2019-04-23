@@ -51,7 +51,7 @@ export default {
         author: '',
         publisher: '',
         published_year: '0000',
-        image_url: '/static/logo.png',
+        image_url: '',
       },
       addLoading: false
     }

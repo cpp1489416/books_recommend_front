@@ -7,6 +7,11 @@
         class="filter-item"
         placeholder="k (recommend param)"
         @keyup.native.enter="reloadPage"/>
+    <el-checkbox
+      class="filter-item" style="margin-left:15px;"
+      v-model="queryParams.ignore_rated">
+      ignore rated &nbsp;
+    </el-checkbox>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="reloadPage">Recommend</el-button>
     </div>
 
@@ -48,6 +53,8 @@
           <el-button size="mini" @click="jumpToRatings(scope.row.id)"> ratings </el-button>
         </template>
       </el-table-column>
+      <el-table-column label="rank" width="90" align="center" :formatter="formatRank" prop="rank">
+      </el-table-column>
     </el-table>
     <pagination
       :total="count"
@@ -79,9 +86,10 @@ export default {
     return {
       queryParams: {
         k: 4,
+        ignore_rated: true,
         order_by: 'id',
         page_number: 1,
-        page_size: 10
+        page_size: 10,
       },
       count: 0,
       content: null,
@@ -128,6 +136,9 @@ export default {
     },
     jumpToBookInfo(id) {
       this.$router.push('/data/books/' + id)
+    },
+    formatRank(row, column, rank) {
+      return rank.toFixed(4)
     }
   }
 }

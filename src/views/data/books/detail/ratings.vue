@@ -6,7 +6,8 @@
       <el-select v-model="queryParams.order_by" class="filter-item">
         <el-option v-for="item in orderBys" :value="item"/>
       </el-select>
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="search"> Search</el-button>
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="search">Search</el-button>
+      <el-button class="filter-item" icon="el-icon-back" @click="$router.back()">Back</el-button>
     </div>
 
     <el-table
@@ -16,16 +17,14 @@
       border
       fit
       highlight-current-row>
-      <!--
-      <el-data-column align="center" label="ID" width="95">
+      <el-table-column label="" width="80" align="center">
         <template slot-scope="scope">
-          {{ scope.row.id }}
+          <img :src="book.image_url" height="40px">
         </template>
-      </el-data-column>
-      -->
+      </el-table-column>
       <el-table-column label="Book Title" align="center">
         <template slot-scope="scope">
-          <el-button type="text" @click="jumpToBookInfo">{{ bookTitle }}</el-button>
+          <el-button type="text" @click="jumpToBookInfo">{{ book.title }}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="User Name">
@@ -33,9 +32,14 @@
           {{scope.row.user.name}}
         </template>
       </el-table-column>
-      <el-table-column label="Rating">
+      <el-table-column label="Rating" width="200px">
         <template slot-scope="scope">
-          {{scope.row.rating}}
+          <el-rate
+            disabled
+            show-score
+            v-model="scope.row.rating"
+            :colors="['#99A9BF', '#F7BA2A', '#FF9900']">
+          </el-rate>
         </template>
       </el-table-column>
     </el-table>
@@ -65,7 +69,6 @@
     data() {
       return {
         queryParams: {
-          name: null,
           location: null,
           order_by: 'id',
           page_number: 1,
@@ -76,8 +79,12 @@
         content: null,
         listLoading: true,
         username: '',
+        book: {
+          title: '',
+          image_url: ''
+        },
         orderBys: [
-          'id', '-id',
+          'id', '-id', 'rating', '-rating', 'user__name', '-user__name', 'user__age', '-user__age'
         ],
       }
     },
@@ -97,7 +104,7 @@
           this.queryParams.order_by = 'id'
         }
         await this.ajax.get('/books/' + this.$route.params.id).then(response => {
-          this.bookTitle = response.info.title
+          this.book = response.info
         })
         await this.ajax.get('/books/' + this.$route.params.id + '/ratings', {
           params: this.queryParams

@@ -13,20 +13,20 @@
       <el-form-item label="Publisher">
         <el-input v-model="bookInfo.publisher"/>
       </el-form-item>
-      <el-form-item label="Published year">
+      <el-form-item label="Published Year">
         <el-date-picker
           v-model="bookInfo.published_year"
           type="year"
           placeholder="选择年">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="Image url">
+      <el-form-item label="Image Url">
         <el-input v-model="bookInfo.image_url"/>
       </el-form-item>
       <el-form-item label="Image">
         <img :src="bookInfo.image_url" height="100px" />
       </el-form-item>
-      <el-form-item label="My rating">
+      <el-form-item label="My Rating">
         <el-rate
           style="display:inline-block; vertical-align: center"
           v-loading="ratingLoading"
@@ -39,6 +39,8 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="modify" :loading="modifyLoading" :disabled="ratingSubmitting" v-if="user.role !== 0">Modify</el-button>
+        <el-button type="danger" @click="remove" :loading="removeLoading" :disabled="ratingSubmitting" v-if="user.role !== 0">Remove</el-button>
+        <el-button @click="jumpToRatings" :loading="modifyLoading" :disabled="ratingSubmitting" v-if="user.role !== 0">Show Others Ratings</el-button>
         <el-button @click="back">Back</el-button>
       </el-form-item>
     </el-form>
@@ -62,6 +64,7 @@ export default {
       modifyLoading: false,
       rating: 0,
       ratingLoading: false,
+      removeLoading: false,
       ratingSubmitting: false,
     }
   },
@@ -82,6 +85,23 @@ export default {
       })
       this.modifyLoading = false
       console.log(this)
+    },
+    async remove() {
+      this.$confirm('Will you remove this book?', 'Confirm', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.removeLoading = true
+        this.ajax.delete('/books/' + this.$route.params.id).then(response => {
+          this.$notify({
+            type: 'success',
+            message: 'removed'
+          })
+          this.back()
+        })
+      }).catch(() => {
+      })
     },
     getBookInfo() {
       this.loading = true
@@ -119,6 +139,9 @@ export default {
         })
       })
       this.ratingSubmitting = false
+    },
+    async jumpToRatings() {
+      this.$router.push('/data/books/' + this.$route.params.id + '/ratings')
     }
   },
   created() {

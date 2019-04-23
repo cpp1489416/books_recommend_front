@@ -1,50 +1,53 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">books_recommend</h3>
+    <el-form ref="loginForm" :model="registerForm" :rules="rules"  class="login-form" auto-complete="on" label-position="left">
+      <h3 class="title">Register</h3>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
+        <el-input v-model="registerForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
         <el-input
-          :type="pwdType"
-          v-model="loginForm.password"
+          v-model="registerForm.password"
           name="password"
-          auto-complete="on"
           placeholder="password"
-          @keyup.enter.native="handleLogin" />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon icon-class="eye" />
+          @keyup.enter.native="register" />
+      </el-form-item>
+      <el-form-item prop="password_confirm">
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
         </span>
+        <el-input
+          v-model="registerForm.password_confirm"
+          name="password_confirm"
+          placeholder="password confirm"
+          @keyup.enter.native="register" />
       </el-form-item>
       <el-form-item>
-        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
-          Sign in
+        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="register">
+          Register
         </el-button>
       </el-form-item>
-      <div class="tips">
-        <span style="margin-right:20px;">username: {admin, [1-100]} </span>
-        <span> password: password</span>
-        <el-button type="primary" style="float:right;" @click="$router.push('/register')"> Register </el-button>
-      </div>
     </el-form>
   </div>
 </template>
 
 <script>
-import { isvalidUsername } from '@/utils/validate'
 
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      callback()
+      if (value === '') {
+        callback(new Error('用户名不能为空'))
+      } else {
+        callback()
+      }
     }
     const validatePass = (rule, value, callback) => {
       if (value.length < 5) {
@@ -53,14 +56,22 @@ export default {
         callback()
       }
     }
+    const validatePasswordConfirm = (rule, value, callback) => {
+      if (value !== this.registerForm.password) {
+        callback(new Error('两次密码不一样'))
+      } else {
+        callback()
+      }
+    }
     return {
-      loginForm: {
-        username: 'admin',
-        password: 'admin'
+      rules: {
+        password: [{ required: true, trigger: 'blur', validator: validatePass }],
+        password_confirm: [{ required: true, trigger: 'blur', validator: validatePasswordConfirm }]
       },
-      loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePass }]
+      registerForm: {
+        username: '',
+        password: '',
+        password_confirm: '',
       },
       loading: false,
       pwdType: 'password',
@@ -68,39 +79,41 @@ export default {
     }
   },
   watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
-    }
   },
   methods: {
-    showPwd() {
-      if (this.pwdType === 'password') {
-        this.pwdType = ''
-      } else {
-        this.pwdType = 'password'
-      }
-    },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then((response) => {
-            this.loading = false
-            if (response.code !== '0') {
-            } else {
-              this.$router.push({ path: this.redirect || '/' })
-            }
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+    async register() {
+      let valid = true
+      await this.$refs.loginForm.validate(value => {
+        valid = value
       })
+      if (!valid) {
+        return
+      }
+      this.loading = true
+      if (this.registerForm.username === '' || this.registerForm.password === '') {
+        this.$notify({
+          message: 'username or password must not be empty',
+          type: 'error'
+        })
+        return
+      }
+      if (this.registerForm.password !== this.registerForm.password_confirm) {
+        this.$notify({
+          message: 'password confirm is incorrect',
+          type: 'error'
+        })
+        return
+      }
+
+      await this.ajax.post('/register', this.registerForm).then(response => {
+        this.$notify({
+          message: 'registered',
+          type: 'success'
+        })
+        this.$router.push('/login')
+      })
+
+      this.loading = false
     }
   }
 }

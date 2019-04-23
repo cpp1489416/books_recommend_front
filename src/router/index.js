@@ -24,6 +24,7 @@ import permission from './permission'
 **/
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
+  { path: '/register', component: () => import('@/views/login/register'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
 
   {
@@ -51,10 +52,16 @@ export const constantRouterMap = [
         meta: {title: 'Recommendations', icon: 'table'}
       },
       {
+        path: 'ratings',
+        name: 'ratings',
+        component: () => import('@/views/my_data/ratings'),
+        meta: {title: 'Ratings', icon: 'table'}
+      },
+      {
         path: 'profile',
         name: 'profile',
         component: () => import('@/views/my_data/profile'),
-        meta: {title: 'profile', icon: 'edit'}
+        meta: {title: 'Profile', icon: 'edit'}
       },
     ]
   },
@@ -68,54 +75,88 @@ export const constantRouterMap = [
       {
         path: 'books',
         name: 'Books',
-        component: () => import('@/views/data/books'),
+        component: () => import('@/views/data/books/index'),
         meta: { title: 'Books', icon: 'table' }
-      },
-      {
-        path: 'users',
-        name: 'users',
-        component: () => import('@/views/data/users'),
-        meta: { title: 'Users', icon: 'table' }
-      },
-      {
-        hidden: true,
-        path: 'ratings_of_user/:id',
-        name: 'ratings_of_user',
-        component: () => import('@/views/data/ratings_of_user'),
-        meta: { title: 'Rates Of User', icon: 'table' }
-      },
-      {
-        hidden: true,
-        path: 'ratings_of_book/:id',
-        name: 'ratings_of_book',
-        component: () => import('@/views/data/ratings_of_book'),
-        meta: { title: 'Rates Of Book', icon: 'table' }
       },
       {
         hidden: true,
         path: 'books/add',
         name: 'books_add',
-        component: () => import('@/views/data/books_add'),
+        component: () => import('@/views/data/books/add'),
         meta: { title: 'Add Book', icon: 'form' }
       },
       {
         hidden: true,
         path: 'books/:id',
         name: 'books_info',
-        component: () => import('@/views/data/books_info'),
-        meta: { title: 'Book Info', icon: 'form' }
+        component: () => import('@/views/data/books/detail'),
+        meta: { title: 'Book', icon: 'form' }
       },
       {
         hidden: true,
-        path: 'recommendations/user/:id',
+        path: 'books/:id/ratings',
+        name: 'ratings_of_book',
+        component: () => import('@/views/data/books/detail/ratings'),
+        meta: { title: 'Ratings Of Book', icon: 'table' }
+      },
+      {
+        path: 'users',
+        name: 'users',
+        component: () => import('@/views/data/users/index'),
+        meta: { title: 'Users', icon: 'table' }
+      },
+      {
+        hidden: true,
+        path: 'users/:id/ratings',
+        name: 'ratings_of_user',
+        component: () => import('@/views/data/users/detail/ratings'),
+        meta: { title: 'Ratings Of User', icon: 'table' }
+      },
+      {
+        hidden: true,
+        path: 'users/:id/recommendations',
         name: 'recommendations_of_user',
-        component: () => import('@/views/data/recommendations_of_user'),
-        meta: {title: 'Recommendations', icon: 'table'}
+        component: () => import('@/views/data/users/detail/recommendations'),
+        meta: {title: 'Recommendations Of User', icon: 'table'}
+      },
+      {
+        hidden: true,
+        path: 'users/:id/profile',
+        name: 'profile_of_user',
+        component: () => import('@/views/data/users/detail/profile'),
+        meta: {title: 'Profile Of User', icon: 'form'}
       },
     ],
   },
-
   {
+    path: '/metrics',
+    component: Layout,
+    redirect: '/metrics/precision',
+    name: 'Metrics',
+    meta: { title: 'Metrics', icon: 'example' },
+    children: [
+      {
+        path: 'precision',
+        name: 'precision',
+        component: () => import('@/views/metrics/precision'),
+        meta: {title: 'Precision', icon: 'chart'}
+      },
+      {
+        path: 'recall',
+        name: 'recall',
+        component: () => import('@/views/metrics/recall'),
+        meta: {title: 'Recall', icon: 'chart'}
+      },
+      {
+        path: 'coverage',
+        name: 'coverage',
+        component: () => import('@/views/metrics/coverage'),
+        meta: {title: 'Coverage', icon: 'chart'}
+      },
+    ]
+  },
+  {
+    hidden: true,
     path: '/3d',
     component: Layout,
     redirect: '/3d/',
@@ -132,6 +173,7 @@ export const constantRouterMap = [
   },
 
   {
+    hidden: true,
     path: '/nested',
     component: Layout,
     redirect: '/nested/menu1',

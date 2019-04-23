@@ -25,11 +25,6 @@
         </template>
       </el-data-column>
       -->
-      <el-table-column label="id" width="110" align="center">
-        <template slot-scope="scope">
-          {{scope.row.id}}
-        </template>
-      </el-table-column>
       <el-table-column label="name">
         <template slot-scope="scope">
           {{ scope.row.name}}
@@ -45,9 +40,16 @@
           {{ scope.row.age }}
         </template>
       </el-table-column>
-      <el-table-column label="" width="180" align="center">
+      <el-table-column label="" width="330" align="center">
         <template slot-scope="scope">
-          <el-button size='mini' @click="jumpToRecommendations(scope.row.id)" type="primary">recommendations</el-button>
+          <el-button size='mini' @click="$router.push('/data/users/' + scope.row.id + '/ratings')">ratings</el-button>
+          <el-button size='mini' @click="jumpToRecommendations(scope.row.id)">recommendations</el-button>
+          <el-button size='mini' @click="jumpToProfile(scope.row.id)">profile</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="id" width="110" align="center">
+        <template slot-scope="scope">
+          {{scope.row.id}}
         </template>
       </el-table-column>
     </el-table>
@@ -120,7 +122,12 @@
       },
       jumpToRecommendations(user_id) {
         this.$router.push({
-          path: '/data/recommendations/user/' + user_id
+          path: '/data/users/' + user_id + '/recommendations'
+        })
+      },
+      jumpToProfile(user_id) {
+        this.$router.push({
+          path: '/data/users/' + user_id + '/profile'
         })
       }
     },

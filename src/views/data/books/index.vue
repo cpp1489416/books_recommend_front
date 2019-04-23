@@ -58,6 +58,11 @@
           <el-button size="mini" @click="jumpToRatings(scope.row.id)"> ratings </el-button>
         </template>
       </el-table-column>
+      <el-table-column label="id" width="79" align="center">
+        <template slot-scope="scope">
+          {{scope.row.id}}
+        </template>
+      </el-table-column>
     </el-table>
     <pagination
       :total="count"
@@ -71,6 +76,7 @@
       v-loading="false"
       :before-close="closeRatingDialog">
       <el-rate
+        show-score
         style="text-align: center;"
         v-loading="ratingDialog.ratingLoading"
         v-model="ratingDialog.rating"

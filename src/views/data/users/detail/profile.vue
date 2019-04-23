@@ -23,7 +23,8 @@
         <img :src="userInfo.avatar_url" height="100px" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="modify" v-loading="modifyLoading">Modify</el-button>
+        <el-button type="primary" @click="modify" v-if="user.role !== 0" v-loading="modifyLoading">Modify</el-button>
+        <el-button type="primary" @click="jumpToRecommendations" v-loading="modifyLoading"> Recommendations </el-button>
         <el-button @click="back">Back</el-button>
       </el-form-item>
     </el-form>
@@ -49,6 +50,7 @@ export default {
         age: 0,
         avatar_url: ''
       },
+      userId: 0,
       loading:true,
       modifyLoading: false,
       rating: 0,
@@ -57,7 +59,7 @@ export default {
   methods: {
     async modify() {
       this.modifyLoading = true
-      await this.ajax.put('/user', this.userInfo).then(response => {
+      await this.ajax.put('/users/' + this.userId, this.userInfo).then(response => {
         this.userInfo = response.info
         this.$notify({
           message: 'modified',
@@ -69,7 +71,7 @@ export default {
     async getUser() {
       this.loading = true
 
-      await this.ajax.get('/user').then(response => {
+      await this.ajax.get('/users/' + this.userId).then(response => {
         this.userInfo = response.info
       })
 
@@ -79,10 +81,12 @@ export default {
     back() {
       this.$router.push('/data/books')
     },
-    async rate() {
+    jumpToRecommendations() {
+      this.$router.push('/data/users/' + this.userId + '/recommendations')
     }
   },
   created() {
+    this.userId = this.$route.params.id
     this.getUser()
   }
 }
