@@ -2,7 +2,6 @@ import Thing from '../common/Thing.js'
 import Buffer from '../common/Buffer'
 import VertexArrayObject from '../common/VertexArrayObject'
 import Texture from '../common/Texture'
-import image_url from '@/assets/textures/pancat.jpg'
 
 export default class extends Thing {
   onCreateVbo() {
@@ -49,7 +48,6 @@ export default class extends Thing {
       this.gl.vertexAttribPointer(textureCoordId, 2, this.gl.FLOAT, this.gl.FALSE, 0, this.gl.NULL)
     }
 
-    this.texture = new Texture(this.gl).fromImage(image_url)
   }
 
   onDraw() {
