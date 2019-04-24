@@ -24,13 +24,13 @@ npm run build --report
 ## Screen Shots
 
 CRUD:
-![](https://github.com/cxc6922/books_recommend_front/static/samples/crud.png)
+![](https://raw.githubusercontent.com/cxc6922/books_recommend_front/master/static/samples/crud.png)
 
 Precision Metrics:
-![](https://github.com/cxc6922/books_recommend_front/static/samples/precision_metrics.png)
+![](https://raw.githubusercontent.com/cxc6922/books_recommend_front/master/static/samples/precision_metrics.png)
 
 Recall Metrics:
-![](https://github.com/cxc6922/books_recommend_front/static/samples/recall_metrics.png)
+![](https://raw.githubusercontent.com/cxc6922/books_recommend_front/master/static/samples/recall_metrics.png)
 
 ## Browsers support
 
