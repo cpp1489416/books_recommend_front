@@ -153,6 +153,12 @@ export const constantRouterMap = [
         component: () => import('@/views/metrics/coverage'),
         meta: {title: 'Coverage', icon: 'chart'}
       },
+       {
+        path: 'f_measure',
+        name: 'f_measure',
+        component: () => import('@/views/metrics/f_measure'),
+        meta: {title: 'F Measure', icon: 'chart'}
+      },
     ]
   },
   {
