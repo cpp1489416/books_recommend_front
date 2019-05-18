@@ -72,7 +72,7 @@
         optionDefault:  {
           backgroundColor: '#344b58',
           title: {
-            text: 'f',
+            text: 'f1',
             x: '20',
             top: '20',
             textStyle: {
